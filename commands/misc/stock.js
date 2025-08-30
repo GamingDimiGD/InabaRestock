@@ -4,10 +4,25 @@ const { getItems } = require("../../index.js");
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("stock")
-        .setDescription("Check the stock of items"),
+        .setDescription("Check the stock of items (only for dimi)")
+        .addStringOption(option =>
+            option.setName("subdomain")
+                .setDescription("The subdomain of the shop")
+                .setRequired(false)
+        )
+        .addNumberOption(option =>
+            option.setName("pages")
+                .setDescription("Maximum number of pages to check")
+                .setRequired(false)
+        )
+    ,
     async execute(interaction) {
+        if (interaction.user.id !== "766856785444864010") return interaction.reply("u not dimi");
         let message = await interaction.reply("Checking the stock of items...");
-        const items = await getItems();
+        const items = await getItems(
+            interaction.options.getString("subdomain") || "inabakumori",
+            Array.from({ length: interaction.options.getNumber("pages") || 2 }, (_, i) => i + 1) || [1, 2]
+        );
         await message.edit(`# ${items.filter(i => !i.soldOut).length}/${items.length} IN STOCK\n${items.map(i => `${i.name} ${i.soldOut ? "(SOLD OUT)" : ""}`).join("\n")}`);
     },
 };

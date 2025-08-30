@@ -10,11 +10,13 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "cheerio": "^1.1.0",
     "chrome-aws-lambda": "^10.1.0",
     "discord": "^0.8.2",
     "discord.js": "^14.22.1",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
+    "node-fetch": "^3.3.2",
     "puppeteer": "^24.17.1",
     "puppeteer-core": "^10.4.0"
   }

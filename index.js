@@ -1,41 +1,38 @@
-const puppeteer = require("puppeteer");
+const cheerio = require("cheerio");
+const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
+require('dotenv').config();
 
 const getItems = async (shopSubdomain = "inabakumori", pageNum = [1, 2]) => {
     const allItems = [];
-    const browser = await puppeteer.launch({ headless: true, executablePath: '' });
+    console.log('[getItems] requested...');
     try {
         for (n of pageNum) {
-            const page = await browser.newPage();
-            await page.goto(`https://${shopSubdomain}.booth.pm/items?page=${n}`, { waitUntil: "networkidle2" });
-            console.log('page ' + n + ' loaded...')
-            await page.waitForSelector(".item a.item-card__title-anchor--multiline.whitespace-normal");
-            console.log('items loaded...')
-            const items = await page.$$eval(".item", els =>
-                els.map(el => {
-                    const name = el.querySelector("a.item-card__title-anchor--multiline.whitespace-normal")?.textContent;
-                    const soldOut = el.querySelector(".shop__text--contents")?.textContent;
-                    return { name, soldOut };
-                })
-            );
-            console.log('items parsed...')
-        
-            items.forEach(item => {
-                allItems.push(item);
-            });
+            console.log('[getItems] fetching page: ' + n);
+            const data = await fetch(`https://api.scraperapi.com/?api_key=${process.env.SCRAPER_API}&url=https%3A%2F%2F${shopSubdomain}.booth.pm%2Fitems%3Fpage%3D${n}&render=true&wait_for_selector=.item`)
+                .then(response => response.text())
+                .catch(error => {
+                    console.log(error)
+                });
+            console.log('[getItems] parsed page ' + n);
+            const $ = cheerio.load(data);
+            const items = $(".item");
+            for (item of items) {
+                const name = $(item).find("a.item-card__title-anchor--multiline.whitespace-normal").text();
+                const soldOut = $(item).find(".shop__text--contents").length > 0;
+                allItems.push({ name, soldOut });
+            }
+            console.log('[getItems] finish parsing page ' + n);
         }
     } catch (error) {
-        console.error(error);
+        console.error("[getItems] " + error);
     } finally {
-        await browser.close();
-        console.log('successfully closed browser...')
+        console.log('[getItems] nice, spent 20 FRIGGIN CREDITS FOR THIS STUPID AHH SITE RAAAHHH')
     }
-    
+
     return allItems;
 }
 
 module.exports.getItems = getItems
-
-require('dotenv').config();
 
 const { Client, Collection, GatewayIntentBits, REST, Routes } = require('discord.js'),
     fs = require('fs'),
@@ -62,6 +59,8 @@ for (const folder of commandFolders) {
     }
 }
 
+module.exports.commands = commands
+
 const eventsPath = path.join(__dirname, 'events');
 const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 
@@ -75,21 +74,5 @@ for (const file of eventFiles) {
     }
 }
 
-const rest = new REST().setToken(process.env.TOKEN);
-
-// and deploy your commands!
-(async () => {
-    try {
-        console.log(`Started refreshing ${commands.length} application (/) commands.`);
-        const data = await rest.put(
-            Routes.applicationGuildCommands(process.env.CLIENT_ID, '1331970479262793820'),
-            { body: commands },
-        );
-
-        console.log(`Successfully reloaded ${data.length} application (/) commands.`);
-    } catch (error) {
-        console.error(error);
-    }
-})();
 
 client.login(process.env.TOKEN);
