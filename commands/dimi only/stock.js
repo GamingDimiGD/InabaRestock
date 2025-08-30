@@ -17,7 +17,6 @@ module.exports = {
         )
     ,
     async execute(interaction) {
-        if (interaction.user.id !== "766856785444864010") return interaction.reply("u not dimi");
         let message = await interaction.reply("Checking the stock of items...");
         const items = await getItems(
             interaction.options.getString("subdomain") || "inabakumori",
