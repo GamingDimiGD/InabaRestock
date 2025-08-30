@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
-const { getItems, url } = require("../../index.js");
+const { getItems } = require("../../index.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -7,7 +7,7 @@ module.exports = {
         .setDescription("Check the stock of items"),
     async execute(interaction) {
         let message = await interaction.reply("Checking the stock of items...");
-        const items = await getItems(url);
+        const items = await getItems();
         await message.edit(`# ${items.filter(i => !i.soldOut).length}/${items.length} IN STOCK\n${items.map(i => `${i.name} ${i.soldOut ? "(SOLD OUT)" : ""}`).join("\n")}`);
     },
 };
