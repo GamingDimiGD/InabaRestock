@@ -25,7 +25,7 @@ const getItems = async (shopSubdomain = "inabakumori", pageNum = [1, 2]) => {
             if (!items.length) {
                 console.warn("[getItems] No items found on page " + n + ", what a waste");
             }
-            if ($('h1').text() === "メンテナンス中です" || $('.not-found-girl').length > 0) {
+            if ($('h1').text() === "メンテナンス中です" || $('span.not-found-girl').length > 0) {
                 console.warn("[getItems] Outage detected, aborting all pages.");
                 break;
             }

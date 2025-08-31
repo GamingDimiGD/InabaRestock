@@ -4,7 +4,7 @@ const { getItems } = require("../../index.js");
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("stock")
-        .setDescription("Check the stock of items (only for dimi)")
+        .setDescription("Check the stock of items and caches it in memory.")
         .addStringOption(option =>
             option.setName("subdomain")
                 .setDescription("The subdomain of the shop")

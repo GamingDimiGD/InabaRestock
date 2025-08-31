@@ -22,26 +22,18 @@ module.exports = {
                 try {
                     const data = await rest.put(
                         Routes.applicationGuildCommands(process.env.CLIENT_ID, guildId),
-                        { body: commands },
+                        { body: guildId === '1410959974842236930' ? dimiOnlyCommands.concat(commands) : commands },
                     );
                     console.log(`[Discord] Registered ${data.length} application (/) commands for server ${guild.name}`);
                 } catch (err) {
                     console.error(`[Discord] Failed to register application (/) commands for server ${guild.name}:`, err);
                 }
             }
-            try {
-                const data = await rest.put(
-                    Routes.applicationGuildCommands(process.env.CLIENT_ID, '1410959974842236930'),
-                    { body: dimiOnlyCommands },
-                );
-                console.log(`[Discord] Registered ${data.length} application (/) commands for server dimi only`);
-            } catch (err) {
-                console.error(`[Discord] Failed to register application (/) commands for server dimi only:`, err);
-            }
 
             console.log(`[Discord] Successfully reloaded application (/) commands through ${client.guilds.cache.size} servers.`);
         } catch (error) {
             console.error(error);
         }
+        client.user.setPresence({ activities: [{ name: 'Inabakumori\'s booth', type: 'WATCHING' }], status: 'online' });
     },
 };
