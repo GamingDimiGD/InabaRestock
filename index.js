@@ -3,6 +3,7 @@ const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fet
 require('dotenv').config();
 const scraperKey = process.env.SCRAPER_API
 module.exports.checkDuration = 3 * 36e5
+module.exports.allItemsCache = []
 
 const getItems = async (shopSubdomain = "inabakumori", pageNum = [1, 2]) => {
     const allItems = [];
