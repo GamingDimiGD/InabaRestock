@@ -21,12 +21,20 @@ const getItems = async (shopSubdomain = "inabakumori", pageNum = [1, 2]) => {
             console.log('[getItems] parsed page ' + n);
             const $ = cheerio.load(data);
             const items = $(".item");
+            if (!items.length) {
+                console.warn("[getItems] No items found on page " + n + ", what a waste");
+            }
+            if ($('h1').text() === "メンテナンス中です" || $('.not-found-girl').length > 0) {
+                console.warn("[getItems] Outage detected, aborting all pages.");
+                break;
+            }
             for (item of items) {
                 const name = $(item).find("a.item-card__title-anchor--multiline.whitespace-normal").text();
                 const soldOut = $(item).find(".shop__text--contents").length > 0;
                 allItems.push({ name, soldOut });
             }
             console.log('[getItems] finish parsing page ' + n);
+            if (items.length < 12) break;
         }
     } catch (error) {
         console.error("[getItems] " + error);
@@ -34,7 +42,7 @@ const getItems = async (shopSubdomain = "inabakumori", pageNum = [1, 2]) => {
         console.log('[getItems] Logged timestamp: ' + Date.now())
         console.log('[getItems] Logged time: ' + new Date())
     }
-
+    if (shopSubdomain === "inabakumori" && pageNum.length === 2) module.exports.allItemsCache = allItems
     return allItems;
 }
 
@@ -90,5 +98,9 @@ for (const file of eventFiles) {
     }
 }
 
+const express = require('express');
+const app = express();
+app.get('/', (req, res) => res.status(200).send('hello marina'));
+app.listen(5500);
 
 client.login(process.env.TOKEN);
