@@ -17,7 +17,7 @@ module.exports = {
         )
     ,
     async execute(interaction) {
-        let message = await interaction.reply("Checking the stock of items...\n -# This may take a while");
+        let message = await interaction.reply("Checking the stock of items...\n-# This may take a while");
         const items = await getItems(
             interaction.options.getString("subdomain") || "inabakumori",
             Array.from({ length: interaction.options.getNumber("pages") || 2 }, (_, i) => i + 1) || [1, 2]
