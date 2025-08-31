@@ -100,8 +100,14 @@ for (const file of eventFiles) {
 }
 
 const express = require('express');
+
 const app = express();
-app.get('/', (req, res) => res.status(200).send('hello marina'));
-app.listen(5500);
+const PORT = process.env.PORT || 13391;
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
 
 client.login(process.env.TOKEN);
