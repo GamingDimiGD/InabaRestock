@@ -9,9 +9,14 @@ module.exports = {
         const channel = client.guilds.cache.get('1410959974842236930').channels.cache.get('1410960597209845791');
         setInterval(async () => {
             let items = await getItems();
-            if (!items) return channel.send('# NO ITEMS FOUND');
-            channel.send(`# ${items.filter(i => !i.soldOut).length}/${items.length} IN STOCK\n${items.map(i => `${i.name} ${i.soldOut ? "(SOLD OUT)" : ""}`).join("\n")}`);
-            if (items.filter(i => !i.soldOut).length !== 0) channel.send("# MIRACLE MIRACLE! @everyone INABAKUMORI RESTOCKED!!!");
+            if (!items.length) return channel.send('# NO ITEMS FOUND');
+            channel.send(`# ${items.filter(i => !i.soldOut).length}/${items.length} IN STOCK\n${items.map(i => `${i.name} ${i.soldOut ? "(SOLD OUT)" : ""}`).join("\n")}`)
+                .then(msg => msg.crosspost())
+                .catch(err => console.log(err));
+            if (items.filter(i => !i.soldOut).length !== 0) 
+                channel.send("# MIRACLE MIRACLE! @everyone INABAKUMORI RESTOCKED!!!")
+                    .then(msg => msg.crosspost())
+                    .catch(err => console.log(err));
         }, checkDuration);
 
 
