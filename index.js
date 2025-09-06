@@ -1,20 +1,18 @@
 const cheerio = require("cheerio");
 const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
 require('dotenv').config();
-const scraperKey = process.env.SCRAPER_API
-module.exports.checkDuration = 3 * 36e5
+module.exports.checkDuration = 1.5 * 36e5
 module.exports.allItemsCache = []
 
 const getItems = async (shopSubdomain = "inabakumori", pageNum = [1, 2]) => {
     const allItems = [];
     console.log('[getItems] requested...');
     try {
-        const selector =  '.item, .item *'
+        const selector = '.item, .item *'
         for (n of pageNum) {
             console.log('[getItems] fetching page: ' + n);
             const data = await fetch(
-                `https://api.scraperapi.com/?api_key=${scraperKey}&url=https%3A%2F%2F${shopSubdomain}.booth.pm%2Fitems%3Fpage%3D${n}&render=true&wait_for_selector=${encodeURIComponent(
-                selector)}`)
+                `https://api.scrapingant.com/v2/general?x-api-key=${process.env.SCRAPINGANT_KEY}&url=${encodeURIComponent(`https://${shopSubdomain}.booth.pm/items?page=${n}`)}&render=true&wait_for_selector=${encodeURIComponent(selector)}`)
                 .then(response => response.text())
                 .catch(error => {
                     console.log(error)
@@ -54,7 +52,7 @@ const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js'
     path = require('path');
 const client = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.DirectMessages],
-    partials: [Partials.Message, Partials.Channel, Partials.GuildMember, Partials.User], 
+    partials: [Partials.Message, Partials.Channel, Partials.GuildMember, Partials.User],
 });
 
 client.commands = new Collection();
