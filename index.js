@@ -3,6 +3,7 @@ const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fet
 require('dotenv').config();
 module.exports.checkDuration = 1.5 * 36e5
 module.exports.allItemsCache = []
+module.exports.lastCheck = 0
 
 const getItems = async (shopSubdomain = "inabakumori", pageNum = [1, 2]) => {
     const allItems = [];
@@ -40,6 +41,7 @@ const getItems = async (shopSubdomain = "inabakumori", pageNum = [1, 2]) => {
     } finally {
         console.log('[getItems] Logged timestamp: ' + Date.now())
         console.log('[getItems] Logged time: ' + new Date())
+        module.exports.lastCheck = Date.now()
     }
     if (shopSubdomain === "inabakumori" && pageNum.length === 2) module.exports.allItemsCache = allItems
     return allItems;
