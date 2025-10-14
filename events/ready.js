@@ -41,13 +41,13 @@ module.exports = {
             console.error(error);
         }
         try {
-            console.log('Started refreshing global application (/) commands.');
+            console.log('[Discord] Started refreshing global application (/) commands.');
             await rest.put(
                 Routes.applicationCommands(process.env.CLIENT_ID),
                 { body: commands },
             );
 
-            console.log('Successfully reloaded global (/) commands.');
+            console.log('[Discord] Successfully reloaded global (/) commands.');
         } catch (error) {
             console.error(error);
         }
