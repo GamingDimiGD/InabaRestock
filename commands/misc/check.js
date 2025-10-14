@@ -7,7 +7,7 @@ module.exports = {
     ,
     async execute(interaction) {
         const { allItemsCache, lastCheck } = require("../../index.js");
-        if (!allItemsCache.length) return await interaction.reply("# NO ITEMS FOUND\nreason: either cache is empty or booth.pm is down");
-        await interaction.reply(`# ${allItemsCache.filter(i => !i.soldOut).length}/${allItemsCache.length} IN STOCK\n${allItemsCache.map(i => `${i.name} ${i.soldOut ? "(SOLD OUT)" : ""}`).join("\n")}\nLast updated <t:${Math.floor(lastCheck/1000)}:R>`);
+        if (!allItemsCache.length) return await interaction.reply("no items found because either cache is empty or booth.pm is down");
+        await interaction.reply(`As of <t:${Math.floor(lastCheck/1000)}:R>, there are ${allItemsCache.filter(i => !i.soldOut).length}/${allItemsCache.length} items that aren't out of stock in inabakumori's booth`);
     },
 };
