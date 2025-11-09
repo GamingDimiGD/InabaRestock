@@ -1,6 +1,8 @@
 const cheerio = require("cheerio");
 const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
-require('dotenv').config();
+require('dotenv').config(),
+    fs = require('fs'),
+    path = require('path');
 module.exports.checkDuration = 1.5 * 36e5
 module.exports.allItemsCache = []
 module.exports.lastCheck = 0
@@ -41,17 +43,22 @@ const getItems = async (shopSubdomain = "inabakumori", pageNum = [1, 2]) => {
     } finally {
         console.log('[getItems] Logged timestamp: ' + Date.now())
         console.log('[getItems] Logged time: ' + new Date())
-        module.exports.lastCheck = Date.now()
     }
-    if (shopSubdomain === "inabakumori" && pageNum.length === 2) module.exports.allItemsCache = allItems
+    if (shopSubdomain === "inabakumori" && pageNum.length === 2) {
+        // module.exports.allItemsCache = allItems
+        // module.exports.lastCheck = Date.now()
+        if (!fs.existsSync(path.join(__dirname, 'cache'))) fs.mkdirSync(path.join(__dirname, 'cache'), { recursive: true });
+        fs.writeFileSync(path.join(__dirname, 'cache', 'checkData.json'), JSON.stringify({
+            allItemsCache: allItems,
+            lastCheck: Date.now()
+        }));
+    }
     return allItems;
 }
 
 module.exports.getItems = getItems
 
-const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js'),
-    fs = require('fs'),
-    path = require('path');
+const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js')
 const client = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.DirectMessages],
     partials: [Partials.Message, Partials.Channel, Partials.GuildMember, Partials.User],
