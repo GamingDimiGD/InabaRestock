@@ -45,8 +45,6 @@ const getItems = async (shopSubdomain = "inabakumori", pageNum = [1, 2]) => {
         console.log('[getItems] Logged time: ' + new Date())
     }
     if (shopSubdomain === "inabakumori" && pageNum.length === 2) {
-        // module.exports.allItemsCache = allItems
-        // module.exports.lastCheck = Date.now()
         if (!fs.existsSync(path.join(__dirname, 'cache'))) fs.mkdirSync(path.join(__dirname, 'cache'), { recursive: true });
         fs.writeFileSync(path.join(__dirname, 'cache', 'checkData.json'), JSON.stringify({
             allItemsCache: allItems,
@@ -63,6 +61,8 @@ const client = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.DirectMessages],
     partials: [Partials.Message, Partials.Channel, Partials.GuildMember, Partials.User],
 });
+
+module.exports.client = client
 
 client.commands = new Collection();
 client.dimiOnlyCommands = new Collection();

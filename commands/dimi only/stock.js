@@ -23,6 +23,6 @@ module.exports = {
             Array.from({ length: interaction.options.getNumber("pages") || 2 }, (_, i) => i + 1) || [1, 2]
         );
         if (!items.length) return await message.edit("# NO ITEMS FOUND");
-        await message.edit(`# ${items.filter(i => !i.soldOut).length}/${items.length} IN STOCK\n${items.map(i => `${i.name} ${i.soldOut ? "(SOLD OUT)" : ""}`).join("\n")}`);
+        await message.edit(`# ${items.filter(i => !i.soldOut).length}/${items.length} IN STOCK\n${items.map(i => `${i.name} ${i.soldOut ? "❌" : "✅"}`).join("\n")}`);
     },
 };

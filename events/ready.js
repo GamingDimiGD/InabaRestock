@@ -1,5 +1,6 @@
 const { Events, REST, Routes } = require('discord.js');
-const { getItems, commands, checkDuration, dimiOnlyCommands, allItemsCache } = require("../index.js");
+const { getItems, commands, checkDuration, dimiOnlyCommands } = require("../index.js");
+const fs = require('fs'), path = require('path');
 
 module.exports = {
     name: Events.ClientReady,
@@ -8,14 +9,14 @@ module.exports = {
         console.log(`[Discord] Ready! Logged in as ${client.user.tag}`);
         const channel = client.guilds.cache.get('1410959974842236930').channels.cache.get('1410960597209845791');
         setInterval(async () => {
-            let { length } = allItemsCache??[];
+            const { allItemsCache, lastCheck } = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf-8")) : { allItemsCache: [], lastCheck: 0 };
             let items = await getItems();
             if (!items.length) return channel.send('# NO ITEMS FOUND');
-            channel.send(`# ${items.filter(i => !i.soldOut).length}/${items.length} IN STOCK\n${items.map(i => `${i.name} ${i.soldOut ? "(SOLD OUT)" : ""}`).join("\n")}`)
+            channel.send(`# ${items.filter(i => !i.soldOut).length}/${items.length} IN STOCK\n${items.map(i => `${i.name} ${i.soldOut ? "❌" : "✅"}`).join("\n")}`)
                 .then(msg => msg.crosspost())
                 .catch(err => console.log(err));
-            if (items.filter(i => !i.soldOut).length !== length)
-                channel.send("# MIRACLE MIRACLE! @everyone INABAKUMORI RESTOCKED!!!\n")
+            if (items.filter(i => !i.soldOut).length !== allItemsCache.filter(i => !i.soldOut).length)
+                channel.send("# <@&1438187277380751370> UPDATE DETECTED")
                     .then(msg => msg.crosspost())
                     .catch(err => console.log(err));
         }, checkDuration);
