@@ -8,8 +8,9 @@ module.exports = {
     async execute(client) {
         console.log(`[Discord] Ready! Logged in as ${client.user.tag}`);
         const channel = client.guilds.cache.get('1410959974842236930').channels.cache.get('1410960597209845791');
-        setInterval(async () => {
-            const { allItemsCache, lastCheck } = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf-8")) : { allItemsCache: [], lastCheck: 0 };
+        const check = async () => {
+            const file = path.join(__dirname, "../cache/checkData.json")
+            const { allItemsCache } = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf-8")) : { allItemsCache: [], lastCheck: 0 };
             let items = await getItems();
             if (!items.length) return channel.send('# NO ITEMS FOUND');
             channel.send(`# ${items.filter(i => !i.soldOut).length}/${items.length} IN STOCK\n${items.map(i => `${i.name} ${i.soldOut ? "❌" : "✅"}`).join("\n")}`)
@@ -19,7 +20,9 @@ module.exports = {
                 channel.send("# <@&1438187277380751370> UPDATE DETECTED")
                     .then(msg => msg.crosspost())
                     .catch(err => console.log(err));
-        }, checkDuration);
+        }
+        check()
+        setInterval(check, checkDuration);
 
 
         const rest = new REST().setToken(process.env.TOKEN);
