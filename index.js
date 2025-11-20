@@ -30,7 +30,7 @@ const getItems = async (shopSubdomain = "inabakumori", pageNum = [1, 2]) => {
                 console.warn("[getItems] Outage detected, aborting all pages.");
                 break;
             }
-            for (item of items) {
+            for (let item of items) {
                 const name = $(item).find("a.item-card__title-anchor--multiline.whitespace-normal").text();
                 const soldOut = $(item).find(".shop__text--contents").length > 0;
                 allItems.push({ name, soldOut });
@@ -44,7 +44,7 @@ const getItems = async (shopSubdomain = "inabakumori", pageNum = [1, 2]) => {
         console.log('[getItems] Logged timestamp: ' + Date.now())
         console.log('[getItems] Logged time: ' + new Date())
     }
-    if (shopSubdomain === "inabakumori" && pageNum.length === 2) {
+    if (shopSubdomain === "inabakumori" && pageNum.length === 2 && allItems.length > 13) {
         if (!fs.existsSync(path.join(__dirname, 'cache'))) fs.mkdirSync(path.join(__dirname, 'cache'), { recursive: true });
         fs.writeFileSync(path.join(__dirname, 'cache', 'checkData.json'), JSON.stringify({
             allItemsCache: allItems,
