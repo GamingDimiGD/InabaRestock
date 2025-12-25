@@ -27,8 +27,11 @@ module.exports = {
         const { deadChatChannelID, deadChatInterval } = require('../config.json');
         const deadChatChannel = client.channels.cache.get(deadChatChannelID);
         let checkDeadChat = () => {
+            if (!deadChatChannel) return console.log('[Discord] Dead chat channel not found.');
             let lastMessage = deadChatChannel.lastMessage;
-            if ((!lastMessage || (Date.now() - lastMessage.createdTimestamp) >= 36e5) && deadChatChannel.lastMessage.author.id !== client.user.id) {
+            console.log(deadChatChannel.lastMessage);
+            if (!lastMessage) return setTimeout(checkDeadChat, parseInt(deadChatInterval));
+            if ((Date.now() - lastMessage.createdTimestamp) >= 36e5 && lastMessage.author.id !== client.user.id) {
                 deadChatChannel.send('<@&1453707542113816586> dead chat alert').catch(err => console.log(err));
             }
             console.log(`[Discord] Dead chat check executed.`);
