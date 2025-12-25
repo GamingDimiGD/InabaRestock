@@ -7,7 +7,7 @@ module.exports = {
     once: true,
     async execute(client) {
         console.log(`[Discord] Ready! Logged in as ${client.user.tag}`);
-        const channel = client.guilds.cache.get('1410959974842236930').channels.cache.get('1410960597209845791');
+        const channel = client.channels.cache.get('1410960597209845791');
         const check = async () => {
             const file = path.join(__dirname, "../cache/checkData.json")
             const { allItemsCache } = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf-8")) : { allItemsCache: [], lastCheck: 0 };
@@ -24,6 +24,16 @@ module.exports = {
         check()
         setInterval(check, checkDuration);
 
+        const { deadChatChannelID, deadChatInterval } = require('../config.json');
+        const deadChatChannel = client.channels.cache.get(deadChatChannelID);
+        let deadChatInterval = () => {
+            let lastMessage = deadChatChannel.lastMessage;
+            if (!lastMessage || (Date.now() - lastMessage.createdTimestamp) >= 36e5) {
+                deadChatChannel.send('<@&1453707542113816586> dead chat alert').catch(err => console.log(err));
+            }
+            console.log(`[Discord] Dead chat check executed.`);
+            return setTimeout(deadChatInterval, parseInt(deadChatInterval));
+        };
 
         const rest = new REST().setToken(process.env.TOKEN);
         try {
