@@ -29,9 +29,8 @@ module.exports = {
         let checkDeadChat = () => {
             if (!deadChatChannel) return console.log('[Discord] Dead chat channel not found.');
             let lastMessage = deadChatChannel.lastMessage;
-            console.log(deadChatChannel.lastMessage);
             if (!lastMessage) return setTimeout(checkDeadChat, parseInt(deadChatInterval));
-            if ((Date.now() - lastMessage.createdTimestamp) >= 36e5 && lastMessage.author.id !== client.user.id) {
+            if ((Date.now() - lastMessage.createdTimestamp) >= parseInt(deadChatInterval) && lastMessage.author.id !== client.user.id) {
                 deadChatChannel.send('<@&1453707542113816586> dead chat alert').catch(err => console.log(err));
             }
             console.log(`[Discord] Dead chat check executed.`);
