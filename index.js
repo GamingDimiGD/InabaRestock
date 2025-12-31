@@ -4,8 +4,7 @@ require('dotenv').config(),
     fs = require('fs'),
     path = require('path');
 module.exports.checkDuration = 1.5 * 36e5
-module.exports.allItemsCache = []
-module.exports.lastCheck = 0
+const itemData = fs.existsSync(path.join(__dirname, 'cache', 'checkData.json')) ? JSON.parse(fs.readFileSync(path.join(__dirname, 'cache', 'checkData.json'), "utf-8")) : { allItemsCache: [], lastCheck: 0 };
 
 const getItems = async (shopSubdomain = "inabakumori", pageNum = [1, 2]) => {
     const allItems = [];
@@ -44,17 +43,20 @@ const getItems = async (shopSubdomain = "inabakumori", pageNum = [1, 2]) => {
         console.log('[getItems] Logged timestamp: ' + Date.now())
         console.log('[getItems] Logged time: ' + new Date())
     }
-    if (shopSubdomain === "inabakumori" && pageNum.length === 2 && allItems.length > 13) {
+    if (shopSubdomain === "inabakumori" && pageNum.length === 2 && allItems.length > 21) {
         if (!fs.existsSync(path.join(__dirname, 'cache'))) fs.mkdirSync(path.join(__dirname, 'cache'), { recursive: true });
-        fs.writeFileSync(path.join(__dirname, 'cache', 'checkData.json'), JSON.stringify({
+        const final = {
             allItemsCache: allItems,
             lastCheck: Date.now()
-        }));
+        }
+        fs.writeFileSync(path.join(__dirname, 'cache', 'checkData.json'), JSON.stringify(final));
+        itemData.allItemsCache = allItems;
+        itemData.lastCheck = Date.now();
     }
     return allItems;
 }
 
-module.exports.getItems = getItems
+module.exports.getItems = getItems;
 
 const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js')
 const client = new Client({
@@ -63,7 +65,6 @@ const client = new Client({
 });
 
 module.exports.client = client
-
 client.commands = new Collection();
 client.dimiOnlyCommands = new Collection();
 const foldersPath = path.join(__dirname, 'commands');
@@ -115,6 +116,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+const rateLimit = require('express-rate-limit');
+const limiter = rateLimit({
+    windowMs: 1 * 60 * 1000,
+    max: 20,
+    handler: (req, res) => {
+        res.status(429).json({ message: "get rate limited lmao" });
+    }
+});
+app.use(limiter);
+
+app.get('/api/checkData', (req, res) => {
+    res.json(itemData);
 });
 
 client.login(process.env.TOKEN);

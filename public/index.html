@@ -1,12 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="images/big.png">
     <title>InabaRestock? Dashboard</title>
 </head>
+
 <body>
-    <h1>Hello Marina!</h1>
-    <p>I'm too lazy to make a dashboard</p>
+    <h1 class="title">Hello Marina!</h1>
+    <h2 class="subtitle" onload="">Loading...</h2>
+    <button class="refresh">Refresh</button>
+    <script>
+        const $ = s => document.querySelector(s);
+        const checkCache = () => fetch(`${location}api/checkData`).then(res => res.json()).then(r => {
+            $('.subtitle').innerHTML = "";
+            r.allItemsCache.forEach(r => {
+                $('.subtitle').innerHTML += (`${r.name}: ${r.soldOut ? "❌" : "✅"}<br>`);
+            });
+        }).catch(e => {
+            $('.subtitle').innerHTML = "Error loading data: " + e.message;
+            console.error(e);
+        });
+        checkCache();
+        $('.refresh').onclick = () => {
+            $('.refresh').disabled = true;
+            $('.subtitle').innerHTML = "Loading...";
+            checkCache();
+            setTimeout(() => {
+                $('.refresh').disabled = false;
+            }, 60000);
+        }
+    </script>
 </body>
+
 </html>
