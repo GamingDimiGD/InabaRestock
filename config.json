@@ -1,4 +1,41 @@
 {
     "deadChatChannelID": "1414149221665214496",
-    "deadChatInterval": "10800000"
+    "deadChatInterval": "10800000",
+    "autoResponseServers": {
+        "1410959974842236930": {
+            "enabled": true,
+            "responses": [
+                {
+                    "triggers": ["inaba"],
+                    "response": "kumori",
+                    "type": "exact"
+                },
+                {
+                    "triggers": ["im the", "i am the", "i'm the"],
+                    "response": "rain",
+                    "type": "startsWith"
+                },
+                {
+                    "triggers": ["certified"],
+                    "response": "inabakumori fan",
+                    "type": "exact"
+                },
+                {
+                    "triggers": ["lag"],
+                    "response": "train",
+                    "type": "exact"
+                },
+                {
+                    "triggers": ["train"],
+                    "response": "lagtrain reference",
+                    "type": "includes"
+                },
+                {
+                    "triggers": ["hadal"],
+                    "response": "abyss zone",
+                    "type": "exact"
+                }
+            ]
+        }
+    }
 }
