@@ -9,19 +9,19 @@ module.exports = {
                 .setDescription("The input to echo back")
                 .setRequired(true)
         )
-        .addStringOption(option =>
+        .addChannelOption(option =>
             option.setName("channel")
-                .setDescription("The id of the channel to send to")
+                .setDescription("The channel to send the message to")
                 .setRequired(false)
         )
-        .addStringOption(option =>
+        .addUserOption(option =>
             option.setName("user")
-                .setDescription("The user to DM to")
+                .setDescription("The user to send the message to")
                 .setRequired(false)
         )
     ,
     async execute(interaction) {
-        const userID = interaction.options.getString("user"), channelID = interaction.options.getString("channel");
+        const userID = interaction.options.getUser("user")?.id, channelID = interaction.options.getChannel("channel")?.id;
         if (!channelID && !userID) return await interaction.reply(interaction.options.getString("input"));
         if (channelID) try {
             await interaction.client.channels.cache.get(channelID).send(interaction.options.getString("input"));

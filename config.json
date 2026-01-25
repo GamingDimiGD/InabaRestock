@@ -6,33 +6,68 @@
             "enabled": true,
             "responses": [
                 {
-                    "triggers": ["inaba"],
+                    "triggers": [
+                        "inaba"
+                    ],
                     "response": "kumori",
                     "type": "exact"
                 },
                 {
-                    "triggers": ["im the", "i am the", "i'm the"],
+                    "triggers": [
+                        "im the",
+                        "i am the",
+                        "i'm the"
+                    ],
                     "response": "rain",
                     "type": "startsWith"
                 },
                 {
-                    "triggers": ["certified"],
+                    "triggers": [
+                        "certified"
+                    ],
                     "response": "inabakumori fan",
                     "type": "exact"
                 },
                 {
-                    "triggers": ["lag"],
+                    "triggers": [
+                        "lag"
+                    ],
                     "response": "train",
                     "type": "exact"
                 },
                 {
-                    "triggers": ["train"],
+                    "triggers": [
+                        "train"
+                    ],
                     "response": "lagtrain reference",
                     "type": "includes"
                 },
                 {
-                    "triggers": ["hadal"],
+                    "triggers": [
+                        "hadal"
+                    ],
                     "response": "abyss zone",
+                    "type": "exact"
+                },
+                {
+                    "triggers": [
+                        "spot"
+                    ],
+                    "response": "late",
+                    "type": "exact"
+                },
+                {
+                    "triggers": [
+                        "compact"
+                    ],
+                    "response": "cat",
+                    "type": "exact"
+                },
+                {
+                    "response": "umbrella",
+                    "triggers": [
+                        "lost"
+                    ],
                     "type": "exact"
                 }
             ]
