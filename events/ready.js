@@ -1,5 +1,5 @@
 const { Events, REST, Routes } = require('discord.js');
-const { getItems, commands, checkDuration, dimiOnlyCommands } = require("../index.js");
+const { getItems, commands, checkDuration, dimiOnlyCommands, gainSentience } = require("../index.js");
 const fs = require('fs'), path = require('path');
 
 module.exports = {
@@ -30,9 +30,12 @@ module.exports = {
             if (!deadChatChannel) return console.log('[Discord] Dead chat channel not found.');
             let lastMessage = deadChatChannel.lastMessage;
             if (!lastMessage) return setTimeout(checkDeadChat, parseInt(deadChatInterval));
-            if ((Date.now() - lastMessage.createdTimestamp) >= parseInt(deadChatInterval) && lastMessage.author.id !== client.user.id) {
+            if ((Date.now() - lastMessage.createdTimestamp) >= parseInt(deadChatInterval) &&
+                (lastMessage.author.id !== client.user.id || lastMessage.content !== '<@&1453707542113816586> dead chat alert')
+            ) {
                 deadChatChannel.send('<@&1453707542113816586> dead chat alert').catch(err => console.log(err));
             }
+            gainSentience(deadChatChannel);
             console.log(`[Discord] Dead chat check executed.`);
             return setTimeout(checkDeadChat, parseInt(deadChatInterval));
         };
