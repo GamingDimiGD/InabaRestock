@@ -1,5 +1,6 @@
 const { Events, REST, Routes } = require('discord.js');
-const { getItems, commands, checkDuration, dimiOnlyCommands, gainSentience } = require("../index.js");
+const { getItems, commands, checkDuration, dimiOnlyCommands } = require("../index.js");
+const { gainSentience, scrapeChat } = require('../ai/gainSentience.js');
 const fs = require('fs'), path = require('path');
 
 module.exports = {
@@ -40,6 +41,11 @@ module.exports = {
             return setTimeout(checkDeadChat, parseInt(deadChatInterval));
         };
         checkDeadChat()
+        try {
+            scrapeChat(deadChatChannel);
+        } catch (error) {
+            console.error(`[Discord] Error scraping dead chat: ${error}`);
+        }
 
         const rest = new REST().setToken(process.env.TOKEN);
         try {

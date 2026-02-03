@@ -58,30 +58,6 @@ const getItems = async (shopSubdomain = "inabakumori", pageNum = [1, 2]) => {
 
 module.exports.getItems = getItems;
 
-const gainSentience = async (channel, messageWordLength = Math.floor(Math.random() * 12) + 3, messageChannel = channel) => {
-    try {
-        if (!channel || messageWordLength <= 0) return;
-        let sentientVocabulary = [...await channel.messages.fetch({ limit: 100 })
-            .then(e => e.reverse()
-                .map(f => f.content.split(' ')).flat().filter(m => !m.includes("@"))
-            ), ...(messageChannel.guild ? await messageChannel.guild.members.fetch()
-                .then(members => members.map(member => member.user.username)) : 'you'),
-        ];
-        let getMessages = (amount) => {
-            let messageContent = '';
-            for (let i = 0; i < amount; i++) {
-                messageContent += sentientVocabulary[Math.floor(Math.random() * sentientVocabulary.length)] + ' '
-            }
-            return messageContent;
-        }
-        messageChannel.send(getMessages(messageWordLength)).catch(err => console.log(err));
-    } catch (error) {
-        console.error(`[gainSentience] ${error}`);
-    }
-}
-
-module.exports.gainSentience = gainSentience;
-
 const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js')
 const client = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.DirectMessages, GatewayIntentBits.GuildMembers],

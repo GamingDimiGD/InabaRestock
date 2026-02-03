@@ -1,7 +1,7 @@
 const { Events } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const { gainSentience } = require('../index.js');
+const { gainSentience, reply } = require('../ai/gainSentience.js');
 
 module.exports = {
     name: Events.MessageCreate,
@@ -9,7 +9,8 @@ module.exports = {
         if (message.author.bot) return;
         const { autoResponseServers } = require(path.join(__dirname, '..', 'config.json'));
         if (message.mentions.has(message.client.user) || !message.guild) {
-            gainSentience(message.channel);
+            // gainSentience(message.channel);
+            message.reply(reply(message.content)).catch(err => console.log(err));
         }
         try {
             if (message.guild && Object.keys(autoResponseServers).includes(message.guild.id) && autoResponseServers[message.guild.id].enabled) {
