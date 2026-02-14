@@ -22,7 +22,7 @@ module.exports = {
                     .then(msg => msg.crosspost())
                     .catch(err => console.log(err));
         }
-        check()
+        // check()
         setInterval(check, checkDuration);
 
         const { deadChatChannelID, deadChatInterval } = require('../config.json');
@@ -42,7 +42,7 @@ module.exports = {
         };
         checkDeadChat()
         try {
-            scrapeChat(deadChatChannel);
+            // scrapeChat(deadChatChannel);
         } catch (error) {
             console.error(`[Discord] Error scraping dead chat: ${error}`);
         }

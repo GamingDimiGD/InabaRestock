@@ -64,9 +64,37 @@
                     "type": "exact"
                 },
                 {
-                    "response": "umbrella",
+                    "response": "use",
                     "triggers": [
-                        "lost"
+                        "non"
+                    ],
+                    "type": "exact"
+                },
+                {
+                    "response": "inabakumori fan",
+                    "triggers": [
+                        "certified"
+                    ],
+                    "type": "exact"
+                },
+                {
+                    "response": "play",
+                    "triggers": [
+                        "float"
+                    ],
+                    "type": "exact"
+                },
+                {
+                    "response": "ame",
+                    "triggers": [
+                        "watashi wa"
+                    ],
+                    "type": "exact"
+                },
+                {
+                    "response": "girl",
+                    "triggers": [
+                        "cooler"
                     ],
                     "type": "exact"
                 }
