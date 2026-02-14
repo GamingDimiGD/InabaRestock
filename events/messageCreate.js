@@ -1,7 +1,6 @@
 const { Events, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
-const path = require('path');
-const { gainSentience, reply, learn } = require('../ai/gainSentience.js');
+const { reply, learn } = require('../ai/gainSentience.js');
 const { ProfanityFilter, checkProfanity } = require("glin-profanity")
 const filter = new ProfanityFilter({
     allowObfuscatedMatch: true,
@@ -14,12 +13,11 @@ module.exports = {
     name: Events.MessageCreate,
     async execute(message) {
         if (message.author.bot) return;
-        const { autoResponseServers } = JSON.parse(fs.readFileSync('./config.json', 'utf-8'));
+        const { trainChannel, autoResponseServers, deadChatChannelID } = JSON.parse(fs.readFileSync('./config.json', 'utf-8'));
         if (
             // message.mentions.has(message.client.user) || !message.guild
-            message.channel.id == '1472185735791775796'
+            message.channel.id == trainChannel
         ) {
-            // gainSentience(message.channel);
             if (checkProfanity(message.content).containsProfanity) {
                 return message.reply("woah woah woah don't swear dude")
             }
@@ -55,7 +53,7 @@ module.exports = {
 
             }
         }
-        if (JSON.parse(fs.readFileSync('./config.json', 'utf-8')).deadChatChannelID == message.channel.id && !message.mentions.has(message.client.user) && !checkProfanity(message.content).containsProfanity) learn(message.content.replaceAll(/<@(&|)[0-9]+>/g, "").replaceAll(/http(s|)m:\/\/\S*/g, ""))
+        if (deadChatChannelID == message.channel.id && !message.mentions.has(message.client.user) && !checkProfanity(message.content).containsProfanity) learn(message.content.replaceAll(/<@(&|)[0-9]+>/g, "").replaceAll(/http(s|)m:\/\/\S*/g, ""))
         try {
             if (message.guild && Object.keys(autoResponseServers).includes(message.guild.id) && autoResponseServers[message.guild.id].enabled) {
                 const { responses } = autoResponseServers[message.guild.id];

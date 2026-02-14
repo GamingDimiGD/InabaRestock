@@ -1,6 +1,6 @@
 const { Events, REST, Routes } = require('discord.js');
 const { getItems, commands, checkDuration, dimiOnlyCommands } = require("../index.js");
-const { gainSentience, scrapeChat } = require('../ai/gainSentience.js');
+const { gainSentience } = require('../ai/gainSentience.js');
 const fs = require('fs'), path = require('path');
 
 module.exports = {
@@ -25,8 +25,9 @@ module.exports = {
         // check()
         setInterval(check, checkDuration);
 
-        const { deadChatChannelID, deadChatInterval } = require('../config.json');
+        const { deadChatChannelID, deadChatInterval, trainChannel: trainChannelID } = JSON.parse(fs.readFileSync('./config.json', 'utf-8'));
         const deadChatChannel = client.channels.cache.get(deadChatChannelID);
+        const trainChannel = client.channels.cache.get(trainChannelID);
         let checkDeadChat = () => {
             if (!deadChatChannel) return console.log('[Discord] Dead chat channel not found.');
             let lastMessage = deadChatChannel.lastMessage;
@@ -36,16 +37,11 @@ module.exports = {
             ) {
                 deadChatChannel.send('<@&1453707542113816586> dead chat alert').catch(err => console.log(err));
             }
-            gainSentience(deadChatChannel);
+            gainSentience(deadChatChannel, null, trainChannel);
             console.log(`[Discord] Dead chat check executed.`);
             return setTimeout(checkDeadChat, parseInt(deadChatInterval));
         };
         checkDeadChat()
-        try {
-            // scrapeChat(deadChatChannel);
-        } catch (error) {
-            console.error(`[Discord] Error scraping dead chat: ${error}`);
-        }
 
         const rest = new REST().setToken(process.env.TOKEN);
         try {

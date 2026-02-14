@@ -1,6 +1,7 @@
 {
     "deadChatChannelID": "1414149221665214496",
     "deadChatInterval": "10800000",
+    "trainChannel": "1472185735791775796",
     "autoResponseServers": {
         "1410959974842236930": {
             "enabled": true,

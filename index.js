@@ -43,7 +43,7 @@ const getItems = async (shopSubdomain = "inabakumori", pageNum = [1, 2]) => {
         console.log('[getItems] Logged timestamp: ' + Date.now())
         console.log('[getItems] Logged time: ' + new Date())
     }
-    if (shopSubdomain === "inabakumori" && pageNum.length === 2 && allItems.length > 21) {
+    if (shopSubdomain === "inabakumori" && pageNum.length === 2 && allItems.length >= 21) {
         if (!fs.existsSync(path.join(__dirname, 'cache'))) fs.mkdirSync(path.join(__dirname, 'cache'), { recursive: true });
         const final = {
             allItemsCache: allItems,
