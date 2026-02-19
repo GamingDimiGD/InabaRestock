@@ -37,7 +37,7 @@ module.exports = {
             ) {
                 deadChatChannel.send('<@&1453707542113816586> dead chat alert').catch(err => console.log(err));
             }
-            gainSentience(deadChatChannel, null, trainChannel);
+            gainSentience(deadChatChannel, undefined, trainChannel);
             console.log(`[Discord] Dead chat check executed.`);
             return setTimeout(checkDeadChat, parseInt(deadChatInterval));
         };
