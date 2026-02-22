@@ -53,7 +53,9 @@ module.exports = {
 
             }
         }
-        if (deadChatChannelID == message.channel.id && !message.mentions.has(message.client.user) && !checkProfanity(message.content).containsProfanity) learn(message.content.replaceAll(/<@(&|)[0-9]+>/g, "").replaceAll(/http(s|)m:\/\/\S*/g, ""))
+        if (deadChatChannelID == message.channel.id && !message.mentions.has(message.client.user) 
+            && !checkProfanity(message.content).containsProfanity
+        ) learn(message.content.replaceAll(/<@(&|)[0-9]+>/g, "").replaceAll(/http(s|)m:\/\/\S*/g, ""))
         try {
             if (message.guild && Object.keys(autoResponseServers).includes(message.guild.id) && autoResponseServers[message.guild.id].enabled) {
                 const { responses } = autoResponseServers[message.guild.id];

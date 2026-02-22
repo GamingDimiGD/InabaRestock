@@ -3,6 +3,13 @@ const { Events, MessageFlags } = require('discord.js');
 module.exports = {
 	name: Events.InteractionCreate,
 	async execute(interaction) {
+		if (interaction.isButton()) {
+			if (interaction.customId === "roll_again") {
+				const sides = interaction.message.content.match(/(\d+) sides/)?.[1] || 6;
+				const result = Math.floor(Math.random() * sides) + 1;
+				await interaction.update({ content: `You rolled a ${result} (${sides} sides)` });
+			}
+		}
 		if (!interaction.isChatInputCommand()) return;
 
 		const command = interaction.client.commands.get(interaction.commandName) || interaction.client.dimiOnlyCommands.get(interaction.commandName);
