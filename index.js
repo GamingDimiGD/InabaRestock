@@ -4,7 +4,7 @@ require('dotenv').config(),
     fs = require('fs'),
     path = require('path');
 module.exports.checkDuration = 1.5 * 36e5
-const itemData = fs.existsSync(path.join(__dirname, 'cache', 'checkData.json')) ? JSON.parse(fs.readFileSync(path.join(__dirname, 'cache', 'checkData.json'), "utf-8")) : { allItemsCache: [], lastCheck: 0 };
+const itemData = fs.existsSync(path.join(__dirname, 'cache', 'checkData.json')) ? JSON.parse(fs.readFileSync(path.join(__dirname, 'cache', 'checkData.json'), "utf-8") || '{}') : { allItemsCache: [], lastCheck: 0 };
 
 const getItems = async (shopSubdomain = "inabakumori", pageNum = [1, 2]) => {
     const allItems = [];

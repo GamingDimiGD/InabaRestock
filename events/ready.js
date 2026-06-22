@@ -1,4 +1,4 @@
-const { Events, REST, Routes } = require('discord.js');
+const { Events, REST, Routes, AttachmentBuilder } = require('discord.js');
 const { getItems, commands, checkDuration, dimiOnlyCommands } = require("../index.js");
 const { gainSentience } = require('../ai/gainSentience.js');
 const fs = require('fs'), path = require('path');

@@ -1,5 +1,4 @@
 const { SlashCommandBuilder } = require("discord.js");
-const { client } = require("../../index");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -8,8 +7,8 @@ module.exports = {
     ,
     async execute(interaction) {
         let ms = Date.now();
-        let message = await interaction.reply(`Train...`);
+        await interaction.deferReply();
         ms = Date.now() - ms;
-        await message.edit('Train. ' + ms + 'ms');
+        await interaction.editReply('Train. ' + ms + 'ms');
     }
 };

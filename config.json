@@ -98,6 +98,13 @@
                         "cooler"
                     ],
                     "type": "exact"
+                },
+                {
+                    "response": "rail",
+                    "triggers": [
+                        "yu"
+                    ],
+                    "type": "exact"
                 }
             ]
         }
