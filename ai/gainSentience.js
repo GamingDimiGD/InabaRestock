@@ -148,6 +148,7 @@ const reply = (input, learns = true) => {
         })
         return allowed;
     });
+    input = input.replaceAll('nigga', 'fella') // i dont want it to learn n words
     input = words.join(" ")
     let { best, bestOnes, bestScore } = findBestKey(words)
     let w1, w2, w3
