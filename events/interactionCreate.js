@@ -31,8 +31,10 @@ module.exports = {
 		} catch (error) {
 			console.error(error);
 			if (interaction.replied || interaction.deferred) {
+				interaction.channel.send('```' + error + '```')
 				await interaction.followUp({ content: 'stupid error alert', flags: MessageFlags.Ephemeral });
 			} else {
+				interaction.channel.send('```' + error + '```')
 				await interaction.followUp({ content: 'stupid error alert', flags: MessageFlags.Ephemeral });
 			}
 		}
