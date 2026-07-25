@@ -74,7 +74,6 @@ const pickKey = (obj) => {
     const entries = Object.entries(obj)
     const total = entries.reduce((a, [, b]) => a + b, 0)
     let r = Math.random() * total
-    console.log(entries, total, r)
     for (const [word, count] of entries) {
         if ((r -= count) <= 0) return { word, entries }
     }
@@ -129,11 +128,9 @@ const findBestKey = (keywords) => {
         return { score, key }
     })
     bestScore = Math.max(...scores.map(s => s.score))
-    console.log(bestScore)
     if (bestScore === 0) return { best: null, bestOnes: [], bestScore };
     const bestOnes = scores.filter(s => s.score === bestScore)
     best = bestOnes[Math.floor(Math.random() * bestOnes.length)]?.key
-    console.log(best)
     return { best: best?.split(" "), bestOnes, bestScore }
 }
 
@@ -181,8 +178,7 @@ const reply = (input, learns = true) => {
         }
         metadata.isQ = isQuestion(input)
         if (!word) break;
-        if (seenKeys.has(key) && Math.random < 0.8) break;
-        console.log(seenKeys)
+        if (seenKeys.has(key) && Math.random() < 0.8) break;
         seenKeys.add(key)
         if (response.filter(w => word === w).length > 4) break;
         response.push(word);

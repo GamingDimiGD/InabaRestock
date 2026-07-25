@@ -1,4 +1,9 @@
-const { Events, EmbedBuilder } = require('discord.js');
+const {
+    Events,
+    EmbedBuilder,
+    ActionRowBuilder,
+    StringSelectMenuBuilder
+} = require('discord.js');
 const fs = require('fs');
 const { reply, learn } = require('../ai/gainSentience.js');
 const { ProfanityFilter, checkProfanity } = require("glin-profanity")
@@ -9,11 +14,94 @@ const filter = new ProfanityFilter({
     logProfanity: true,
 })
 
+const sanitizeYTURL = (url) => url.replace('https://music.youtube.com/watch?v=', 'https://youtu.be/')
+    .replace('https://www.youtube.com/watch?v=', 'https://youtu.be/')
+    .replace(/(&|\?)(si=|t=)[\s\S]*/g, '');
+
+const validURLStarters = [
+    'https://www.youtube.com/watch?v=',
+    'https://youtu.be/', // use this as default
+    'https://music.youtube.com/watch?v='
+], pageLength = 15;
+exports.validURLStarters = validURLStarters;
+exports.pageLength = pageLength;
+
+const cHandler = fs.existsSync('./ai/c.json') ? JSON.parse(fs.readFileSync('./ai/c.json', 'utf-8')) : {},
+    playlist = JSON.parse(fs.readFileSync('./events/playlist.json', 'utf-8'));
+exports.cHandler = cHandler;
+
 module.exports = {
     name: Events.MessageCreate,
     async execute(message) {
         if (message.author.bot) return;
-        const { trainChannel, autoResponseServers, deadChatChannelID } = JSON.parse(fs.readFileSync('./config.json', 'utf-8'));
+        const { trainChannel, autoResponseServers, deadChatChannelID, eventChannel } = JSON.parse(fs.readFileSync('./config.json', 'utf-8'));
+
+        if (message.channel.id == eventChannel) {
+
+            await fs.writeFileSync("./ai/c.json", JSON.stringify({ t: Date.now() }))
+            console.log("[messageCreate.js event] Performing anti corruption check... " + cHandler?.t)
+            if (!cHandler?.t) return message.reply('we running out of storage');
+
+            const prefix = '!'
+            if (!message.content.startsWith(prefix)) return;
+            let command = message.content.split(/\s+/)[0].toLowerCase().slice(1);
+            let args = message.content.split(/\s+/).splice(1);
+            if (command === 'submit') {
+                if (!args.length) return message.reply('use `' + prefix + 'submit <YouTube url>` to submit a song.');
+                let url = args[0];
+                if (!validURLStarters.some(s => url.startsWith(s))) return message.reply('invalid url, has to be youtube or youtube music url.');
+                const userQuota = 3
+                url = sanitizeYTURL(url);
+                if (Object.values(playlist).filter(id => message.author.id == id).length >= userQuota) return message.reply('you have reached your quota of ' + userQuota + ' songs');
+                if (playlist[url]) {
+                    const userWhoAdded = message.guild.members.cache.get(playlist[url]).user.username;
+                    message.reply(`\`${url}\` has already been added by ${userWhoAdded}!`).catch(err => console.log(err));
+                    return;
+                }
+                playlist[url] = message.author.id;
+                fs.writeFileSync('./events/playlist.json', JSON.stringify(playlist, null, 4));
+                message.reply(`Added \`${url}\` to the event playlist!`).catch(err => console.log(err));
+            }
+            if (command === 'unsubmit' || command === 'remove') {
+                if (!args.length) return message.reply('use `' + prefix + 'unsubmit <YouTube url>` to remove a song.');
+                let url = args[0];
+                if (!validURLStarters.some(s => url.startsWith(s))) return message.reply('invalid url, has to be youtube or youtube music url.');
+                url = sanitizeYTURL(url);
+                if (!playlist[url]) return message.reply(`\`${url}\` is not in the playlist!`).catch(err => console.log(err));
+                if (playlist[url] != message.author.id) return message.reply(`\`${url}\` was not added by you!`).catch(err => console.log(err));
+                delete playlist[url];
+                fs.writeFileSync('./events/playlist.json', JSON.stringify(playlist, null, 4));
+                message.reply(`removed \`${url}\` from the event playlist!`).catch(err => console.log(err));
+            }
+            if (command === 'playlist' || command === 'pl' || command === 'list') {
+                if (Object.keys(playlist).length == 0) return message.reply('playlist is empty.');
+                let embed = new EmbedBuilder()
+                    .setTitle('Event Playlist')
+                    .setDescription(Object.keys(playlist).splice(0, pageLength).map((url, i) =>
+                        `${i}. \`${url}\` (submitted by ${message.guild.members.cache.get(playlist[url])?.user?.username || 'unknown user'})`
+                    ).join('\n'))
+                    .setColor('#b2b2b2')
+                    .setFooter({ text: `Page 1/${Math.ceil(Object.keys(playlist).length / pageLength)}, ${Object.keys(playlist).length} songs` })
+                    .setTimestamp();
+                let pageSelectors = []
+                for (let i = 1; i <= Math.ceil(Object.keys(playlist).length / pageLength); i++) {
+                    pageSelectors.push({
+                        label: `Page ${i}`,
+                        value: i.toString()
+                    })
+                }
+                const row = new ActionRowBuilder()
+                    .addComponents(
+                        new StringSelectMenuBuilder()
+                            .setCustomId('playlistPageSelector')
+                            .setPlaceholder('Select a page')
+                            .addOptions(...pageSelectors)
+                    )
+                message.reply({ embeds: [embed], components: [row] }).catch(err => console.log(err));
+            }
+        }
+
+
         if (
             // message.mentions.has(message.client.user) || !message.guild
             message.channel.id == trainChannel
@@ -24,7 +112,6 @@ module.exports = {
             let res = reply(message.content.replaceAll("<@1410941750641561730>", "").trim().replaceAll("?debug", ""))
             message.reply(res.response.replaceAll(/<@[0-9]+>|<@&[0-9]+>/g, "[mention blocked]")).catch(err => console.log(err));
             if (message.content.includes("?debug")) {
-                console.log(res.metadata)
                 let { startInfo } = res.metadata
                 let embed = new EmbedBuilder()
                     .setTitle("Markrov AI Debug Info")
@@ -53,7 +140,7 @@ module.exports = {
 
             }
         }
-        if (deadChatChannelID == message.channel.id && !message.mentions.has(message.client.user) 
+        if (deadChatChannelID == message.channel.id && !message.mentions.has(message.client.user)
             && !checkProfanity(message.content).containsProfanity
         ) learn(message.content.replaceAll(/<@(&|)[0-9]+>/g, "").replaceAll(/http(s|)m:\/\/\S*/g, ""))
         try {
@@ -76,4 +163,5 @@ module.exports = {
             console.error(`[Discord] Error processing autoResponse: ${error}`);
         }
     },
+    pageLength
 };
