@@ -29,7 +29,7 @@ const validURLStarters = [
         '1470019967415091293', // lv 10
         '1470020127750881394', // lv 15
     ]
-    
+
 
 
 const cHandler = fs.existsSync('./ai/c.json') ? JSON.parse(fs.readFileSync('./ai/c.json', 'utf-8')) : {},
@@ -86,10 +86,21 @@ module.exports = {
             }
             if (command === 'playlist' || command === 'pl' || command === 'list') {
                 if (Object.keys(playlist).length == 0) return message.reply('playlist is empty.');
+                const msg = await message.reply('fetching users...').catch(err => console.log(err));
                 let embed = new EmbedBuilder()
                     .setTitle('Event Playlist')
-                    .setDescription(Object.keys(playlist).splice(0, pageLength).map((url, i) =>
-                        `${i}. \`${url}\` (submitted by ${message.guild.members.cache.get(playlist[url])?.user?.username || 'unknown user'})`
+                    .setDescription((
+                        await Promise.all(
+                            Object.keys(playlist)
+                                .slice(0, pageLength)
+                                .map(async (url, i) => {
+                                    const member =
+                                        message.guild.members.cache.get(playlist[url]) ??
+                                        await message.guild.members.fetch(playlist[url]).catch(() => null);
+
+                                    return `${i}. \`${url}\` (submitted by ${member?.user?.username ?? 'unknown user'})`;
+                                })
+                        )
                     ).join('\n'))
                     .setColor('#b2b2b2')
                     .setFooter({ text: `Page 1/${Math.ceil(Object.keys(playlist).length / pageLength)}, ${Object.keys(playlist).length} songs` })
@@ -108,7 +119,7 @@ module.exports = {
                             .setPlaceholder('Select a page')
                             .addOptions(...pageSelectors)
                     )
-                message.reply({ embeds: [embed], components: [row] }).catch(err => console.log(err));
+                msg.edit({ content: '', embeds: [embed], components: [row] }).catch(err => console.log(err));
             }
         }
 
