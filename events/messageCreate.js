@@ -16,13 +16,20 @@ const filter = new ProfanityFilter({
 
 const sanitizeYTURL = (url) => url.replace('https://music.youtube.com/watch?v=', 'https://youtu.be/')
     .replace('https://www.youtube.com/watch?v=', 'https://youtu.be/')
-    .replace(/(&|\?)(si=|t=)[\s\S]*/g, '');
+    .replace(/(&|\?)(si|t|is)=[\s\S]*/g, '');
 
 const validURLStarters = [
     'https://www.youtube.com/watch?v=',
     'https://youtu.be/', // use this as default
     'https://music.youtube.com/watch?v='
-], pageLength = 15;
+],
+    pageLength = 15,
+    roleQuotaBonusList = [
+        '1470019710761566272', // lv 5
+        '1470019967415091293', // lv 10
+        '1470020127750881394', // lv 15
+    ]
+    
 exports.validURLStarters = validURLStarters;
 exports.pageLength = pageLength;
 
@@ -34,7 +41,7 @@ module.exports = {
     name: Events.MessageCreate,
     async execute(message) {
         if (message.author.bot) return;
-        const { trainChannel, autoResponseServers, deadChatChannelID, eventChannel } = JSON.parse(fs.readFileSync('./config.json', 'utf-8'));
+        const { trainChannel, autoResponseServers, deadChatChannelID, eventChannel, eventDeadline } = JSON.parse(fs.readFileSync('./config.json', 'utf-8'));
 
         if (message.channel.id == eventChannel) {
 
@@ -47,10 +54,14 @@ module.exports = {
             let command = message.content.split(/\s+/)[0].toLowerCase().slice(1);
             let args = message.content.split(/\s+/).splice(1);
             if (command === 'submit') {
+                if (Date.now() > eventDeadline) return message.reply('the event is over lmao');
                 if (!args.length) return message.reply('use `' + prefix + 'submit <YouTube url>` to submit a song.');
                 let url = args[0];
                 if (!validURLStarters.some(s => url.startsWith(s))) return message.reply('invalid url, has to be youtube or youtube music url.');
-                const userQuota = 3
+                const bonus = roleQuotaBonusList.indexOf(
+                    roleQuotaBonusList.find(id => message.member.roles.cache.has(id))
+                ) + 1
+                const userQuota = 3 + bonus
                 url = sanitizeYTURL(url);
                 if (Object.values(playlist).filter(id => message.author.id == id).length >= userQuota) return message.reply('you have reached your quota of ' + userQuota + ' songs');
                 if (playlist[url]) {
@@ -60,9 +71,10 @@ module.exports = {
                 }
                 playlist[url] = message.author.id;
                 fs.writeFileSync('./events/playlist.json', JSON.stringify(playlist, null, 4));
-                message.reply(`Added \`${url}\` to the event playlist!`).catch(err => console.log(err));
+                message.reply(`Added \`${url}\` to the event playlist! (${Object.values(playlist).filter(id => message.author.id == id).length}/${userQuota} songs submitted)`).catch(err => console.log(err));
             }
             if (command === 'unsubmit' || command === 'remove') {
+                if (Date.now() > eventDeadline) return message.reply('the event is over lmao');
                 if (!args.length) return message.reply('use `' + prefix + 'unsubmit <YouTube url>` to remove a song.');
                 let url = args[0];
                 if (!validURLStarters.some(s => url.startsWith(s))) return message.reply('invalid url, has to be youtube or youtube music url.');
@@ -162,6 +174,5 @@ module.exports = {
         } catch (error) {
             console.error(`[Discord] Error processing autoResponse: ${error}`);
         }
-    },
-    pageLength
+    }
 };
