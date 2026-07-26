@@ -30,8 +30,7 @@ const validURLStarters = [
         '1470020127750881394', // lv 15
     ]
     
-exports.validURLStarters = validURLStarters;
-exports.pageLength = pageLength;
+
 
 const cHandler = fs.existsSync('./ai/c.json') ? JSON.parse(fs.readFileSync('./ai/c.json', 'utf-8')) : {},
     playlist = JSON.parse(fs.readFileSync('./events/playlist.json', 'utf-8'));
@@ -174,5 +173,6 @@ module.exports = {
         } catch (error) {
             console.error(`[Discord] Error processing autoResponse: ${error}`);
         }
-    }
+    },
+    pageLength
 };
