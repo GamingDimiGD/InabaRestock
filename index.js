@@ -6,7 +6,7 @@ require('dotenv').config(),
 module.exports.checkDuration = 1.5 * 36e5
 const itemData = fs.existsSync(path.join(__dirname, 'cache', 'checkData.json')) ? JSON.parse(fs.readFileSync(path.join(__dirname, 'cache', 'checkData.json'), "utf-8") || '{}') : { allItemsCache: [], lastCheck: 0 };
 
-const getItems = async (shopSubdomain = "inabakumori", pageNum = [1, 2]) => {
+const getItems = async (shopSubdomain = "inabakumori", pageNum = [1, 2], useCache = true) => {
     const allItems = [];
     console.log('[getItems] requested...');
     try {
@@ -44,6 +44,7 @@ const getItems = async (shopSubdomain = "inabakumori", pageNum = [1, 2]) => {
         console.log('[getItems] Logged time: ' + new Date())
     }
     if (shopSubdomain === "inabakumori" && pageNum.length === 2 && allItems.length >= 21) {
+        if (useCache === 'false') return allItems;
         if (!fs.existsSync(path.join(__dirname, 'cache'))) fs.mkdirSync(path.join(__dirname, 'cache'), { recursive: true });
         const final = {
             allItemsCache: allItems,
