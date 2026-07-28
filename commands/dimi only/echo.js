@@ -22,7 +22,10 @@ module.exports = {
     ,
     async execute(interaction) {
         const userID = interaction.options.getUser("user")?.id, channelID = interaction.options.getChannel("channel")?.id;
-        if (!channelID && !userID) return await interaction.reply(interaction.options.getString("input"));
+        if (!channelID && !userID) {
+            await interaction.channel.send(interaction.options.getString("input"));
+            return await interaction.reply({ content: 'sent', flags: MessageFlags.Ephemeral })
+        }
         if (channelID) try {
             await interaction.client.channels.cache.get(channelID).send(interaction.options.getString("input"));
             await interaction.reply({ content: 'sent', flags: MessageFlags.Ephemeral })
