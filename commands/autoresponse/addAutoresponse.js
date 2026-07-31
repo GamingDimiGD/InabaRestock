@@ -19,7 +19,7 @@ module.exports = {
         )
         .addStringOption(option =>
             option.setName('type')
-                .setDescription('The type of trigger (exact, includes, startsWith)')
+                .setDescription('The type of trigger')
                 .setRequired(true)
                 .addChoices(
                     { name: 'exact', value: 'exact' },
