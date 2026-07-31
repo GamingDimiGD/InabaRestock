@@ -40,7 +40,7 @@ module.exports = {
     name: Events.MessageCreate,
     async execute(message) {
         if (message.author.bot) return;
-        const { trainChannel, autoResponseServers, deadChatChannelID, eventChannel, eventDeadline } = JSON.parse(fs.readFileSync('./config.json', 'utf-8'));
+        const { trainChannel, autoResponseServers, deadChatChannelID, eventChannel, eventDeadline, secretResponses } = JSON.parse(fs.readFileSync('./config.json', 'utf-8'));
 
         if (message.channel.id == eventChannel) {
 
@@ -105,19 +105,12 @@ module.exports = {
                     .setColor('#b2b2b2')
                     .setFooter({ text: `Page 1/${Math.ceil(Object.keys(playlist).length / pageLength)}, ${Object.keys(playlist).length} songs` })
                     .setTimestamp();
-                let pageSelectors = []
-                for (let i = 1; i <= Math.ceil(Object.keys(playlist).length / pageLength); i++) {
-                    pageSelectors.push({
-                        label: `Page ${i}`,
-                        value: i.toString()
-                    })
-                }
                 const row = new ActionRowBuilder()
                     .addComponents(
                         new StringSelectMenuBuilder()
                             .setCustomId('playlistPageSelector')
                             .setPlaceholder('Select a page')
-                            .addOptions(...pageSelectors)
+                            .addOptions(Array.from({ length: Math.ceil(Object.keys(playlist).length / pageLength) }, (_, i) => ({ label: `Page ${i + 1}`, value: `${i + 1}`, })))
                     )
                 msg.edit({ content: '', embeds: [embed], components: [row] }).catch(err => console.log(err));
             }
@@ -176,6 +169,26 @@ module.exports = {
                         await message.channel.send(response.response);
                         break;
                     } else if (response.type === 'startsWith' && response.triggers.some(trigger => message.content.toLowerCase().startsWith(trigger))) {
+                        await message.channel.send(response.response);
+                        break;
+                    } else if (response.type === 'endsWith' && response.triggers.some(trigger => message.content.toLowerCase().endsWith(trigger))) {
+                        await message.channel.send(response.response);
+                        break;
+                    }
+                }
+            }
+            if (message.guild && message.guild.id === '1410959974842236930') {
+                for (const response of secretResponses) {
+                    if (response.type === 'exact' && response.triggers.some(trigger => trigger === message.content.toLowerCase())) {
+                        await message.channel.send(response.response);
+                        break;
+                    } else if (response.type === 'includes' && response.triggers.some(trigger => message.content.toLowerCase().includes(trigger))) {
+                        await message.channel.send(response.response);
+                        break;
+                    } else if (response.type === 'startsWith' && response.triggers.some(trigger => message.content.toLowerCase().startsWith(trigger))) {
+                        await message.channel.send(response.response);
+                        break;
+                    } else if (response.type === 'endsWith' && response.triggers.some(trigger => message.content.toLowerCase().endsWith(trigger))) {
                         await message.channel.send(response.response);
                         break;
                     }

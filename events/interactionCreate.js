@@ -1,5 +1,6 @@
 const { Events, MessageFlags, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
 const { pageLength } = require('./messageCreate.js');
+const { responsesPerPage } = require('../commands/autoresponse/listAutoresponse.js');
 const fs = require('fs');
 
 module.exports = {
@@ -36,20 +37,32 @@ module.exports = {
 						.setColor('#b2b2b2')
 						.setFooter({ text: `Page ${page}/${Math.ceil(Object.keys(playlist).length / pageLength)}, ${Object.keys(playlist).length} songs` })
 						.setTimestamp();
-					let pageSelectors = []
-					for (let i = 1; i <= Math.ceil(Object.keys(playlist).length / pageLength); i++) {
-						pageSelectors.push({
-							label: `Page ${i}`,
-							value: i.toString()
-						})
-					}
 					const row = new ActionRowBuilder()
 						.addComponents(
 							new StringSelectMenuBuilder()
 								.setCustomId('playlistPageSelector')
 								.setPlaceholder('Select a page')
-								.addOptions(...pageSelectors)
+								.addOptions(Array.from({ length: Math.ceil(Object.keys(playlist).length / pageLength) }, (_, i) => ({ label: `Page ${i + 1}`, value: `${i + 1}` })))
 						)
+					await interaction.update({ embeds: [embed], components: [row] });
+				} else if (interaction.customId === "autoresponsePageSelector") {
+					let page = parseInt(interaction.values[0]);
+					const { autoResponseServers } = JSON.parse(fs.readFileSync('./config.json', 'utf-8'));
+					const responses = autoResponseServers[interaction.guild.id].responses;
+					let embed = new EmbedBuilder()
+						.setTitle('Autoresponses for this server')
+						.setColor('#b2b2b2')
+						.setDescription([ ...responses ].splice((page - 1) * responsesPerPage, responsesPerPage).map((response, index) => `**${(page - 1) * 10 + index + 1}.** \`${response.triggers.join('`, `')}\` => ${response.response}\n-# Type: \`${response.type}\``).join('\n'))
+						.setFooter({ text: `Page ${page} of ${Math.ceil(responses.length / responsesPerPage)} | ${responses.length} autoresponses` });
+					const row = new ActionRowBuilder()
+						.addComponents(
+							new StringSelectMenuBuilder()
+								.setCustomId('autoresponsePageSelector')
+								.setPlaceholder('Select a page')
+								.addOptions(
+									Array.from({ length: Math.ceil(responses.length / responsesPerPage) }, (_, i) => ({ label: `Page ${i + 1}`, value: `${i + 1}` }))
+								)
+					)
 					await interaction.update({ embeds: [embed], components: [row] });
 				}
 			}

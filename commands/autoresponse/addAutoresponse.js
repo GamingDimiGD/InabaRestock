@@ -24,7 +24,8 @@ module.exports = {
                 .addChoices(
                     { name: 'exact', value: 'exact' },
                     { name: 'includes', value: 'includes' },
-                    { name: 'startsWith', value: 'startsWith' }
+                    { name: 'startsWith', value: 'startsWith' },
+                    { name: 'endsWith', value: 'endsWith' }
                 )
         )
     ,

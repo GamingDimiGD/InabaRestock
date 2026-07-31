@@ -28,8 +28,7 @@ module.exports = {
         await interaction.deferReply();
         let replyMessage = await reply(question, learn).response;
         if (!replyMessage) console.error(`[AI] Failed to get a reply for the question: ${question}`);
-        replyMessage = `Q. ${question} \nA. ${replyMessage}`;
-        console.log(`[AI] ${replyMessage}`);
+        replyMessage = `Q. ${question} \nA. ${replyMessage.replaceAll(/<@[0-9]+>|<@&[0-9]+>/g, "[mention blocked]")}`;
         await interaction.editReply(replyMessage || "i am merl and i dont know anything");
     }
 };
