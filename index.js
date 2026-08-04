@@ -1,6 +1,6 @@
 const cheerio = require("cheerio");
 const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
-require('dotenv').config(),
+require('dotenv').config({ quiet: true });
     fs = require('fs'),
     path = require('path');
 module.exports.checkDuration = 1.5 * 36e5

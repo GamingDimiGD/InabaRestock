@@ -1,0 +1,57 @@
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js'),
+    fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args)),
+    URL = "https://gamingdimigd.github.io/InabaRestockImageDB/"
+
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName('osagery')
+        .setDescription('osage + imagery = osagery, get a random osage/inabakumori or related image')
+        .addStringOption(option =>
+            option.setName('search')
+                .setDescription('search for specific osagery by name')
+                .setRequired(false)
+        )
+        .addIntegerOption(option =>
+            option.setName('number')
+                .setDescription('get specific osagery by number')
+                .setRequired(false)
+        )
+    ,
+    async execute(interaction) {
+        await interaction.deferReply();
+        const imageDataList = await fetch(URL + "data.json?t=" + Date.now(), {
+            cache: "no-store",
+        }).then(res => res.text()).then(text => JSON.parse(text));
+        if (!imageDataList || !imageDataList.length) return interaction.editReply("something broke lmao");
+        let number = (interaction.options.getInteger('number')
+            ?? imageDataList.findIndex(imageData => imageData.name.toLowerCase().includes(interaction.options.getString('search')?.toLowerCase())) + 1) 
+            || Math.floor(Math.random() * imageDataList.length) + 1
+        if (number > imageDataList.length || number < 1) return interaction.editReply(`invalid number, must be between 1 and ${imageDataList.length}`);
+        let { name, submitted_by, artist, edited_by } = imageDataList[number - 1];
+        let artistData, editedByData;
+        if (artist) artistData = await fetch(URL + "artistData.json?t=" + Date.now(), {
+            cache: "no-store",
+        }).then(res => res.text()).then(text => JSON.parse(text));
+        if (edited_by) editedByData = await fetch(URL + "editedByData.json?t=" + Date.now(), {
+            cache: "no-store",
+        }).then(res => res.text()).then(text => JSON.parse(text));
+        if (edited_by) edited_by = editedByData[edited_by] ? `[${edited_by}](${editedByData[edited_by]})` : edited_by;
+        if (typeof artist === "array" || artist instanceof Array) {
+            artist = artist.map(a => artistData[a] ? `[${a}](${artistData[a]})` : a).join(", ")
+        } else if ((typeof artist === "string" || artist instanceof String) && artistData[artist]) {
+            artist = `[${artist}](${artistData[artist]})`;
+        }
+
+        const imageUrl = URL + "images/" + name;
+
+        const submitter = await interaction.client.users.fetch(submitted_by).catch(() => null);
+        await interaction.editReply({
+            embeds: [
+                new EmbedBuilder()
+                    .setTitle(name)
+                    .setImage(imageUrl)
+                    .setDescription(`submitted by ${submitter ? `**${submitter?.globalName}**` : `unknown user id \`${submitted_by}\``}${artist ? `\nartist(s): ${artist}` : ""}${edited_by ? `\nmeme created by: ${edited_by}` : ""}\nthis is osagery number ${number} of ${imageDataList.length} `)
+                    .setColor('#b2b2b2')
+        ] });
+    }
+}
