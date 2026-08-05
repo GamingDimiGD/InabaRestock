@@ -5,7 +5,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js'),
 
 const findBestMatch = (search, imageDataList) => {
     if (!search) return -1;
-    const similarities = imageDataList.map(imageData => stringSimilarity(search, imageData.name, 1));
+    const similarities = imageDataList.map(imageData => Math.max(stringSimilarity(search, imageData?.searchName || '', 1), stringSimilarity(search, imageData.name, 1)));
     return similarities.indexOf(Math.max(...similarities));
 }
 
@@ -34,7 +34,7 @@ module.exports = {
             ?? findBestMatch(interaction.options.getString('search'), imageDataList) + 1) 
             || Math.floor(Math.random() * imageDataList.length) + 1
         if (number > imageDataList.length || number < 1) return interaction.editReply(`invalid number, must be between 1 and ${imageDataList.length}`);
-        let { name, submitted_by, artist, edited_by } = imageDataList[number - 1];
+        let { name, submitted_by, artist, edited_by, searchName } = imageDataList[number - 1];
         let artistData, editedByData;
         if (artist) artistData = await fetch(URL + "artistData.json?t=" + Date.now(), {
             cache: "no-store",
@@ -57,7 +57,7 @@ module.exports = {
                 new EmbedBuilder()
                     .setTitle(name)
                     .setImage(imageUrl)
-                    .setDescription(`submitted by ${submitter ? `**${submitter?.globalName}**` : `unknown user id \`${submitted_by}\``}${artist ? `\nartist(s): ${artist}` : ""}${edited_by ? `\nmeme created by: ${edited_by}` : ""}\nthis is osagery number ${number} of ${imageDataList.length} `)
+                    .setDescription(`submitted by ${submitter ? `**${submitter?.globalName}**` : `unknown user id \`${submitted_by}\``}${artist ? `\nartist(s): ${artist}` : ""}${edited_by ? `\nmeme created by: ${edited_by}` : ""}${searchName ? `\nsearch-friendly name: ${searchName}` : ""}\nthis is osagery number ${number} of ${imageDataList.length}`)
                     .setColor('#b2b2b2')
         ] });
     }
