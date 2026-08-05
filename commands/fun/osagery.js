@@ -1,6 +1,13 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js'),
     fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args)),
-    URL = "https://gamingdimigd.github.io/InabaRestockImageDB/"
+    URL = "https://gamingdimigd.github.io/InabaRestockImageDB/",
+    { stringSimilarity } = require('string-similarity-js');
+
+const findBestMatch = (search, imageDataList) => {
+    if (!search) return -1;
+    const similarities = imageDataList.map(imageData => stringSimilarity(search, imageData.name, 1));
+    return similarities.indexOf(Math.max(...similarities));
+}
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -24,7 +31,7 @@ module.exports = {
         }).then(res => res.text()).then(text => JSON.parse(text));
         if (!imageDataList || !imageDataList.length) return interaction.editReply("something broke lmao");
         let number = (interaction.options.getInteger('number')
-            ?? imageDataList.findIndex(imageData => imageData.name.toLowerCase().includes(interaction.options.getString('search')?.toLowerCase())) + 1) 
+            ?? findBestMatch(interaction.options.getString('search'), imageDataList) + 1) 
             || Math.floor(Math.random() * imageDataList.length) + 1
         if (number > imageDataList.length || number < 1) return interaction.editReply(`invalid number, must be between 1 and ${imageDataList.length}`);
         let { name, submitted_by, artist, edited_by } = imageDataList[number - 1];
