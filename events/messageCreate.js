@@ -179,17 +179,27 @@ module.exports = {
             }
             if (message.guild && message.guild.id === '1410959974842236930') {
                 for (const response of secretResponses) {
+                    const discover = () => setTimeout(async () => {
+                        let config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
+                        config.secretResponses.find(r => r.triggers.includes(response.triggers[0])).discovered = true;
+                        fs.writeFileSync('./config.json', JSON.stringify(config, null, 4));
+                        await message.reply("you discovered a new secret autoresponse! the trigger(s) was/were: `" + response.triggers.join("`, `") + "`");
+                    }, 1000)
                     if (response.type === 'exact' && response.triggers.some(trigger => trigger === message.content.toLowerCase())) {
                         await message.channel.send(response.response);
+                        if (!response.discovered) discover()
                         break;
                     } else if (response.type === 'includes' && response.triggers.some(trigger => message.content.toLowerCase().includes(trigger))) {
                         await message.channel.send(response.response);
+                        if (!response.discovered) discover()
                         break;
                     } else if (response.type === 'startsWith' && response.triggers.some(trigger => message.content.toLowerCase().startsWith(trigger))) {
                         await message.channel.send(response.response);
+                        if (!response.discovered) discover()
                         break;
                     } else if (response.type === 'endsWith' && response.triggers.some(trigger => message.content.toLowerCase().endsWith(trigger))) {
                         await message.channel.send(response.response);
+                        if (!response.discovered) discover()
                         break;
                     }
                 }
