@@ -22,6 +22,8 @@ module.exports = {
             .setTitle(song.title)
             .setURL(song.link)
             .setDescription(`BPM: ${song.bpm}, Vocals: ${song.vocals}\nNumber ${number} of ${songs.length} (Sorted by BPM)`)
+            .setFooter({ text: "Released at" })
+            .setTimestamp(song.date);
         if (isYTLink) embed.setImage(`https://img.youtube.com/vi/${song.link.replace("https://youtu.be/", "")}/0.jpg`);
         await interaction.editReply({ embeds: [embed] });
     },
