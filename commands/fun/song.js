@@ -14,10 +14,12 @@ module.exports = {
     async execute(interaction) {
         const songs = JSON.parse(fs.readFileSync("./songs.json", "utf-8"));
         let song = songs[interaction.options.getInteger("number") - 1] || songs[Math.floor(Math.random() * songs.length)];
+        const isYTLink = song.link.startsWith("https://youtu.be/");
         const embed = new EmbedBuilder()
             .setTitle(song.name)
             .setURL(song.link)
             .setDescription(`BPM: ${song.bpm}, Vocals: ${song.vocals}`)
-        await interaction.reply({ embeds: [embed], content: song.link });
+        if (isYTLink) embed.setImage(`https://img.youtube.com/vi/${song.link.replace("https://youtu.be/", "")}/0.jpg`);
+        await interaction.reply({ embeds: [embed] });
     },
 };
