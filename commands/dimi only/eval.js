@@ -18,6 +18,6 @@ module.exports = {
         } catch (error) {
             returns = error;
         }
-        interaction.reply(`input: \`\`\`${code}\`\`\`\noutput: \`\`\`js\n${returns}\n\`\`\``);
+        interaction.reply(`input: \`\`\`js\n${code}\`\`\`\noutput: \`\`\`js\n${returns}\n\`\`\``);
     }
 };
