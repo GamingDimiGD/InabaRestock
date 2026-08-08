@@ -249,7 +249,8 @@
         "vocals": "Kagamine Rin",
         "bpm": 158,
         "link": "https://youtu.be/KLxigReVbk8",
-        "date": 1642942912000
+        "dateAccuracy": "y",
+        "date": 1388534400000
     },
     {
         "title": "紗痲 - 煮ル果実 (Inabakumori Remix)",
@@ -312,7 +313,8 @@
         "vocals": "Kaai Yuki",
         "bpm": 178,
         "link": "https://youtu.be/JtYuM06hi3I",
-        "date": 1618923141000
+        "dateAccuracy": "y",
+        "date": 1420070400000
     },
     {
         "title": "Yoyuyoku",
@@ -326,7 +328,8 @@
         "vocals": "Haruka Nana",
         "bpm": 180,
         "link": "https://youtu.be/jNrmpIA2IBk",
-        "date": 1618949311000
+        "dateAccuracy": "y",
+        "date": 1388534400000
     },
     {
         "title": "ROLELESS WEAPON",
@@ -396,7 +399,8 @@
         "vocals": "Kaai Yuki",
         "bpm": 220,
         "link": "https://youtu.be/PJo89L-_l3s",
-        "date": 1631484499000
+        "date": 1512777600000,
+        "dateAccuracy": "d"
     },
     {
         "title": "Hadal Abyss Zone",

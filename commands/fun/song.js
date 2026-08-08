@@ -23,7 +23,9 @@ module.exports = {
             .setURL(song.link)
             .setDescription(`BPM: ${song.bpm}, Vocals: ${song.vocals}\nNumber ${number} of ${songs.length} (Sorted by BPM)`)
             .setFooter({ text: "Released at" })
-            .setTimestamp(song.date);
+        if (song.date && !song.dateAccuracy) embed.setTimestamp(song.date)
+        else if (song.date && song.dateAccuracy === "y") embed.setFooter({ text: `Released at • ${new Date(song.date).getFullYear()}` })
+        else if (song.date && song.dateAccuracy === "d") embed.setFooter({ text: `Released at • ${new Date(song.date).toDateString()}` })
         if (isYTLink) embed.setImage(`https://img.youtube.com/vi/${song.link.replace("https://youtu.be/", "")}/0.jpg`);
         await interaction.editReply({ embeds: [embed] });
     },
