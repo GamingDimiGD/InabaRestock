@@ -1,6 +1,5 @@
 const { Events, MessageFlags, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
 const { pageLength } = require('./messageCreate.js');
-const { responsesPerPage } = require('../commands/autoresponse/listAutoresponse.js');
 const fs = require('fs');
 
 module.exports = {
@@ -47,23 +46,45 @@ module.exports = {
 					await interaction.update({ embeds: [embed], components: [row] });
 				} else if (interaction.customId === "autoresponsePageSelector") {
 					let page = parseInt(interaction.values[0]);
-					const { autoResponseServers } = JSON.parse(fs.readFileSync('./config.json', 'utf-8'));
+					const autoResponseServers = JSON.parse(fs.readFileSync('./data/autoResponseServers.json', 'utf-8'));
 					const responses = autoResponseServers[interaction.guild.id].responses;
+					const entries = responses.map((response, index) =>
+						`**${index + 1}.** \`${response.triggers.join('`, `')}\` => ${response.response}\n-# Type: \`${response.type}\``
+					);
+					const pages = [];
+					let currentPage = '';
+
+					for (const entry of entries) {
+						if (currentPage.length + entry.length + 2 > 1000) {
+							pages.push(currentPage);
+							currentPage = entry;
+						} else {
+							currentPage += (currentPage ? '\n' : '') + entry;
+						}
+					}
+
+					if (currentPage) pages.push(currentPage);
+
 					let embed = new EmbedBuilder()
 						.setTitle('Autoresponses for this server')
 						.setColor('#b2b2b2')
-						.setDescription([ ...responses ].splice((page - 1) * responsesPerPage, responsesPerPage).map((response, index) => `**${(page - 1) * 10 + index + 1}.** \`${response.triggers.join('`, `')}\` => ${response.response}\n-# Type: \`${response.type}\``).join('\n'))
-						.setFooter({ text: `Page ${page} of ${Math.ceil(responses.length / responsesPerPage)} | ${responses.length} autoresponses` });
+						.setDescription(pages[page - 1])
+						.setFooter({ text: `Page 1 of ${pages.length} | ${responses.length} autoresponses` });
+
 					const row = new ActionRowBuilder()
 						.addComponents(
 							new StringSelectMenuBuilder()
 								.setCustomId('autoresponsePageSelector')
 								.setPlaceholder('Select a page')
 								.addOptions(
-									Array.from({ length: Math.ceil(responses.length / responsesPerPage) }, (_, i) => ({ label: `Page ${i + 1}`, value: `${i + 1}` }))
+									Array.from({ length: pages.length }, (_, i) => ({ label: `Page ${i + 1}`, value: `${i + 1}` }))
 								)
-					)
-					await interaction.update({ embeds: [embed], components: [row] });
+						)
+					await interaction.update({ embeds: [embed], components: [row] }).catch(async e => {
+						console.log(e);
+						if (e.code === 50035) return await interaction.reply('bro ur autoresponses are too long i cant list it properly');
+						await interaction.reply('error lol');
+					});
 				}
 			}
 			if (!interaction.isChatInputCommand()) return;

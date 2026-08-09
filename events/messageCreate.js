@@ -40,7 +40,9 @@ module.exports = {
     name: Events.MessageCreate,
     async execute(message) {
         if (message.author.bot) return;
-        const { trainChannel, autoResponseServers, deadChatChannelID, eventChannel, eventDeadline, secretResponses } = JSON.parse(fs.readFileSync('./config.json', 'utf-8'));
+        const { trainChannel, deadChatChannelID, eventChannel, eventDeadline } = JSON.parse(fs.readFileSync('./config.json', 'utf-8')),
+            autoResponseServers = JSON.parse(fs.readFileSync('./data/autoResponseServers.json', 'utf-8')),
+            secretResponses = JSON.parse(fs.readFileSync('./data/SecretAutoResponses.json', 'utf-8'))
 
         if (message.channel.id == eventChannel) {
 
@@ -180,11 +182,11 @@ module.exports = {
             if (message.guild && message.guild.id === '1410959974842236930') {
                 for (const response of secretResponses) {
                     const discover = () => setTimeout(async () => {
-                        let config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
-                        config.secretResponses.find(r => r.triggers.includes(response.triggers[0])).discovered = true;
-                        fs.writeFileSync('./config.json', JSON.stringify(config, null, 4));
-                        await message.reply("you discovered a new secret autoresponse! the trigger(s) was/were: `" + response.triggers.join("`, `") + "`");
-                    }, 1000)
+                        let s = JSON.parse(fs.readFileSync('./data/SecretAutoResponses.json', 'utf-8'))
+                        s.find(r => r.triggers.includes(response.triggers[0])).discovered = true;
+                        fs.writeFileSync('./data/SecretAutoResponses.json', JSON.stringify(s, null, 4));
+                        await message.reply("you discovered a new secret autoresponse! the trigger(s) was/were: `" + response.triggers.join("`, `") + "` (" + s.filter(r => r.discovered).length + '/' + secretResponses.length + " discovered)");
+                    }, 500)
                     if (response.type === 'exact' && response.triggers.some(trigger => trigger === message.content.toLowerCase())) {
                         await message.channel.send(response.response);
                         if (!response.discovered) discover()

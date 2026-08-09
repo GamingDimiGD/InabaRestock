@@ -1,7 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js'),
-    fs = require('fs'),
-    path = require('path'),
-    configPath = path.join(__dirname, '..', '..', 'config.json');
+    fs = require('fs')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -20,13 +18,14 @@ module.exports = {
         if (!interaction.member.permissions.has('ManageGuild')) {
             return await interaction.reply('You do not have permission to use this command.');
         }
-        if (interaction.guild.id !== '1410959974842236930') return await interaction.reply('Other servers aren\'t supported yet.');
+        // if (interaction.guild.id !== '1410959974842236930') return await interaction.reply('Other servers aren\'t supported yet.');
         const trigger = interaction.options.getString('trigger');
-        const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-        const saidTrigger = config.autoResponseServers[interaction.guild.id].responses.find(response => response.triggers.includes(trigger));
+        let autoResponseServers = JSON.parse(fs.readFileSync('./data/autoResponseServers.json', 'utf8'));
+        const saidTrigger = autoResponseServers[interaction.guild.id].responses.find(response => response.triggers.includes(trigger));
         if (!saidTrigger) return await interaction.reply('No autoresponse found with that trigger.');
-        config.autoResponseServers[interaction.guild.id].responses = config.autoResponseServers[interaction.guild.id].responses.filter(response => response.triggers.includes(trigger) === false);
-        fs.writeFileSync(configPath, JSON.stringify(config, null, 4));
+        autoResponseServers[interaction.guild.id].responses = autoResponseServers[interaction.guild.id].responses.filter(response => response.triggers.includes(trigger) === false);
+        if (!autoResponseServers[interaction.guild.id].responses.length) delete autoResponseServers[interaction.guild.id];
+        fs.writeFileSync('./data/autoResponseServers.json', JSON.stringify(autoResponseServers, null, 4));
         await interaction.reply('Autoresponse removed successfully!');
     }
 };

@@ -1,5 +1,13 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js"),
-    fs = require("fs")
+    fs = require("fs"),
+    { stringSimilarity } = require('string-similarity-js');
+
+const findBestMatch = (search, songs) => {
+    if (!search) return -1;
+    const similarities = songs.map(song => Math.max(stringSimilarity(search, song?.searchName || '', 1), stringSimilarity(search, song.title, 1)));
+    return similarities.indexOf(Math.max(...similarities));
+}
+
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -10,11 +18,19 @@ module.exports = {
                 .setDescription("Get specific song by number")
                 .setRequired(false)
         )
+        .addStringOption(option =>
+            option.setName("search")
+                .setDescription("Search for specific song by name")
+                .setRequired(false)
+        )
     ,
     async execute(interaction) {
         await interaction.deferReply();
         const songs = JSON.parse(fs.readFileSync("./songs.json", "utf-8"));
-        const number = interaction.options.getInteger("number") || Math.floor(Math.random() * songs.length) + 1
+        const number = (
+            interaction.options.getInteger("number")
+            ?? findBestMatch(interaction.options.getString("search"), songs) + 1
+        ) || Math.floor(Math.random() * songs.length) + 1
         if (number > songs.length || number < 1) return interaction.editReply(`invalid number, must be between 1 and ${songs.length}`);
         let song = songs[number - 1];
         const isYTLink = song.link.startsWith("https://youtu.be/");

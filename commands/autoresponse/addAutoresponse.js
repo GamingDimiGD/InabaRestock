@@ -1,7 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js'),
-    fs = require('fs'),
-    path = require('path'),
-    configPath = path.join(__dirname, '..', '..', 'config.json');
+    fs = require('fs')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -36,14 +34,23 @@ module.exports = {
         if (!interaction.member.permissions.has('ManageGuild')) {
             return await interaction.reply('You do not have permission to use this command.');
         }
-        if (interaction.guild.id !== '1410959974842236930') return await interaction.reply('Other servers aren\'t supported yet.');
+        // if (interaction.guild.id !== '1410959974842236930') return await interaction.reply('Other servers aren\'t supported yet.');
         const type = interaction.options.getString('type');
         const message = interaction.options.getString('message');
         const triggers = interaction.options.getString('triggers').split(',').map(s => s.trim());
-        const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-        // if (!config.autoResponseServers[interaction.guild.id]) config.autoResponseServers[interaction.guild.id] = { enabled: true, responses: [] };
-        config.autoResponseServers[interaction.guild.id].responses.push({ response: message, triggers, type });
-        fs.writeFileSync(configPath, JSON.stringify(config, null, 4));
+        const autoResponseServers = JSON.parse(fs.readFileSync('./data/autoResponseServers.json', 'utf8'));
+        if (
+            message.length > 500 ||
+            triggers.some(t => t.length > 50) ||
+            triggers.some(t => t.length < 1) ||
+            triggers.length > 5
+        ) {
+            return await interaction.reply('Invalid trigger(s) or response, responses should be less than 500 characters, triggers should be less than 50 characters and less than 5 triggers.');
+        }
+        if (!autoResponseServers[interaction.guild.id]) autoResponseServers[interaction.guild.id] = { enabled: true, responses: [] };
+        if (autoResponseServers[interaction.guild.id].responses.length > 100) return await interaction.reply('You have reached the maximum number of autoresponses.');
+        autoResponseServers[interaction.guild.id].responses.push({ response: message, triggers, type });
+        fs.writeFileSync('./data/autoResponseServers.json', JSON.stringify(autoResponseServers, null, 4));
         await interaction.reply('Autoresponse added successfully!');
     }
 };
