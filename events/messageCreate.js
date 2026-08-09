@@ -42,7 +42,7 @@ module.exports = {
         if (message.author.bot) return;
         const { trainChannel, deadChatChannelID, eventChannel, eventDeadline } = JSON.parse(fs.readFileSync('./config.json', 'utf-8')),
             autoResponseServers = JSON.parse(fs.readFileSync('./data/autoResponseServers.json', 'utf-8')),
-            secretResponses = JSON.parse(fs.readFileSync('./data/SecretAutoResponses.json', 'utf-8'))
+            secretResponses = JSON.parse(fs.readFileSync('./data/secretAutoResponses.json', 'utf-8'))
 
         if (message.channel.id == eventChannel) {
 
@@ -182,9 +182,9 @@ module.exports = {
             if (message.guild && message.guild.id === '1410959974842236930') {
                 for (const response of secretResponses) {
                     const discover = () => setTimeout(async () => {
-                        let s = JSON.parse(fs.readFileSync('./data/SecretAutoResponses.json', 'utf-8'))
+                        let s = JSON.parse(fs.readFileSync('./data/secretAutoResponses.json', 'utf-8'))
                         s.find(r => r.triggers.includes(response.triggers[0])).discovered = true;
-                        fs.writeFileSync('./data/SecretAutoResponses.json', JSON.stringify(s, null, 4));
+                        fs.writeFileSync('./data/secretAutoResponses.json', JSON.stringify(s, null, 4));
                         await message.reply("you discovered a new secret autoresponse! the trigger(s) was/were: `" + response.triggers.join("`, `") + "` (" + s.filter(r => r.discovered).length + '/' + secretResponses.length + " discovered)");
                     }, 500)
                     if (response.type === 'exact' && response.triggers.some(trigger => trigger === message.content.toLowerCase())) {
