@@ -121,7 +121,7 @@ const save = async () => {
     fs.writeFileSync('./ai/tinyBrain.json', JSON.stringify(tinyBrain))
     fs.writeFileSync('./ai/starterBrain.json', JSON.stringify(starterBrain));
     console.log('[AI] Autosaved!')
-    setTimeout(save, parseInt(fs.readFileSync('./config.json', 'utf-8').brainSaveInterval) * 1e3)
+    setTimeout(save, parseInt(JSON.parse(fs.readFileSync('./config.json', 'utf-8')).brainSaveInterval) * 1e3)
 }
 
 save()
