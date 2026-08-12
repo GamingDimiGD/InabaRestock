@@ -80,7 +80,7 @@ const pickKey = (obj) => {
 }
 
 const learn = async (sentence) => {
-    if (!sentence) return;
+    if (!sentence || sentence.split(/\s+/).length < 3) return;
     const words = sentence.toLowerCase().split(/\s+/).filter(f => {
         let allowed = true;
         bannedWords.forEach(b => {
