@@ -160,8 +160,7 @@ module.exports = {
             && !checkProfanity(message.content).containsProfanity
         ) {
             const msg = message.content.replaceAll(/<@(&|)[0-9]+>/g, "").replaceAll(/http(s|)m:\/\/\S*/g, "");
-            if (msg.split(/\s+/).length < 3) return;
-            learn(msg);
+            if (msg.split(/\s+/).length > 3) learn(msg);
         }
         try {
             if (message.guild && Object.keys(autoResponseServers).includes(message.guild.id) && autoResponseServers[message.guild.id].enabled) {
