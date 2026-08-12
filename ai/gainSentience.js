@@ -112,7 +112,7 @@ const learn = async (sentence) => {
     console.log('[AI] Brains\' size: ', Object.keys(brain).length + Object.keys(smallBrain).length + Object.keys(tinyBrain).length)
 }
 
-const save = () => {
+const save = async () => {
     console.log('[AI] Autosaving...')
     await fs.writeFileSync("./ai/c.json", JSON.stringify({ t: Date.now() }))
     if (!cHandler.t) return console.error("[AI] Storage error detected, aborting saving functions")
