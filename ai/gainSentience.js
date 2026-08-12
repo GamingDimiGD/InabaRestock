@@ -124,6 +124,8 @@ const save = async () => {
     setTimeout(save, parseInt(fs.readFileSync('./config.json', 'utf-8').brainSaveInterval) * 1e3)
 }
 
+save()
+
 const findBestKey = (keywords) => {
     keywords = keywords.filter(w => !filler.includes(w));
     let best = null, bestScore = 0
