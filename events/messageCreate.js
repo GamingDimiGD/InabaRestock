@@ -30,7 +30,6 @@ const validURLStarters = [
         '1470020127750881394', // lv 15
     ]
 
-const learnBucket = [], learnBucketLimit = 100
 
 const cHandler = fs.existsSync('./ai/c.json') ? JSON.parse(fs.readFileSync('./ai/c.json', 'utf-8')) : {},
     playlist = JSON.parse(fs.readFileSync('./events/playlist.json', 'utf-8'));
@@ -162,15 +161,7 @@ module.exports = {
         ) {
             const msg = message.content.replaceAll(/<@(&|)[0-9]+>/g, "").replaceAll(/http(s|)m:\/\/\S*/g, "");
             if (msg.split(/\s+/).length < 3) return;
-            learnBucket.push(msg)
-            if (learnBucket.length > 100) {
-                console.log("[AI] Learning" + learnBucket.length + " messages")
-                for (let m of learnBucket) {
-                    learn(m)
-                }
-                console.log("[AI] Finished learning" + learnBucket.length + " messages")
-                learnBucket = []
-            }
+            learn(msg);
         }
         try {
             if (message.guild && Object.keys(autoResponseServers).includes(message.guild.id) && autoResponseServers[message.guild.id].enabled) {
