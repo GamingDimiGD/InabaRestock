@@ -2,7 +2,7 @@ const { SlashCommandBuilder } = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName("sacrifice")
+        .setName("abyss")
         .setDescription("Drags a user to the hadal abyss zone (this will @mention them)")
         .addMentionableOption(option =>
             option.setName("user")
