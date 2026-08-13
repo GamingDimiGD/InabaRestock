@@ -185,7 +185,7 @@ module.exports = {
 
                 const prefix = '!'
                 if (message.content.startsWith(prefix)) {
-                    // let command = message.content.split(/\s+/)[0].toLowerCase().slice(1);
+                    let command = message.content.split(/\s+/)[0].toLowerCase().slice(1);
                     // let args = message.content.split(/\s+/).splice(1);
                     if (command === 'list-secrets' || command === 'ls' || command === 'secrets') {
                         let secretResponses = JSON.parse(fs.readFileSync('./data/secretAutoResponses.json', 'utf-8'));
