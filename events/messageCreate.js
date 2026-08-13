@@ -182,6 +182,22 @@ module.exports = {
                 }
             }
             if (message.guild && message.guild.id === '1410959974842236930') {
+
+                const prefix = '!'
+                if (message.content.startsWith(prefix)) {
+                    // let command = message.content.split(/\s+/)[0].toLowerCase().slice(1);
+                    // let args = message.content.split(/\s+/).splice(1);
+                    if (command === 'list-secrets' || command === 'ls' || command === 'secrets') {
+                        let secretResponses = JSON.parse(fs.readFileSync('./data/secretAutoResponses.json', 'utf-8'));
+                        const embed = new EmbedBuilder()
+                            .setTitle("Secret Autoresponses")
+                            .setColor("#b2b2b2")
+                            .setDescription(secretResponses.filter(r => r.discovered).map(r => '`' + r.triggers.join("`, `") + '`').join("\n"))
+                            .setFooter({ text: `Listing ${secretResponses.filter(r => r.discovered).length} of ${secretResponses.length} secret autoresponses` })
+                        await message.reply({ embeds: [embed] });
+                    }
+                }
+
                 for (const response of secretResponses) {
                     const discover = () => setTimeout(async () => {
                         let s = JSON.parse(fs.readFileSync('./data/secretAutoResponses.json', 'utf-8'))
