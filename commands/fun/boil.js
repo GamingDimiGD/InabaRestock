@@ -32,7 +32,10 @@ module.exports = {
             'enable=\'between(t,5,19)\'',
 
             '-c:v', 'libx264',
-            '-c:a', 'aac',
+            '-preset', 'veryfast',
+            '-threads', '2',
+            '-pix_fmt', 'yuv420p',
+
             '-y',
             'output.mp4'
         ], async (error) => {
