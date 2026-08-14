@@ -1,7 +1,6 @@
 const { SlashCommandBuilder, AttachmentBuilder } = require("discord.js"),
     { execFile } = require("child_process"),
-    boilURL = 'https://cdn.discordapp.com/attachments/1411289295070826496/1537817706626154586/20260727_1356201.mp4?ex=6a806bd8&is=6a7f1a58&hm=0b68cf5fd8cc0325de9c2718f5545355d07a4f2ea17382ec442d02a1811159e8&',
-    commandCooldown = 1e3 * 60 * 15;
+    fs = require("fs");
 
 let lastBoil = 0;
 
@@ -16,7 +15,11 @@ module.exports = {
         )
     ,
     async execute(interaction) {
+        const { commandCooldown, boilURL } = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
+        if (!boilURL) return await interaction.reply('boil url is not set in `config.json`, pls tell dimi about this');
+        if (!interaction.options.getMentionable('user').user) return await interaction.reply('invite me to this server pls otherwise the command won\'t work for some reason');
         const pfp = interaction.options.getMentionable('user').user.displayAvatarURL({ format: 'png' });
+        if(!pfp) return await interaction.reply('user not found!');
         if (Date.now() - lastBoil < commandCooldown) return await interaction.reply('i need a break bro my cpu\'s getting fried, i\'ll be back <t:' + Math.floor((lastBoil + commandCooldown) / 1e3) + ':R>');
         lastBoil = Date.now();
         await interaction.reply('hold on a sec, im boiling...');
