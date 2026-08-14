@@ -28,7 +28,7 @@ module.exports = {
             '-i', pfp,
 
             '-filter_complex',
-            '[1:v]scale=300:300,colorchannelmixer=aa=0.75[img]' +
+            '[1:v]scale=300:300,colorchannelmixer=aa=0.75[img];' +
             '[0:v][img]overlay=' +
             '(main_w-overlay_w)/2:' +
             '(main_h-overlay_h)/2:' +
