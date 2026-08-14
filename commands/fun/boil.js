@@ -30,9 +30,9 @@ module.exports = {
             '-c:a', 'aac',
             '-y',
             'output.mp4'
-        ], async (stderr, stdout, error) => {
+        ], async (error) => {
             if (error) {
-                console.error(error);
+                return console.error(error);
                 // await interaction.editReply({ content: 'error: ' + error.slice(0, 100) });
             }
             await interaction.editReply({ files: [new AttachmentBuilder('output.mp4', { name: 'boil.mp4' })] });
