@@ -20,8 +20,8 @@ module.exports = {
         if (Date.now() - lastBoil < commandCooldown) return await interaction.reply('i need a break bro my cpu\'s getting fried, i\'ll be back <t:' + Math.floor((lastBoil + commandCooldown) / 1e3) + ':R>');
         lastBoil = Date.now();
         await interaction.reply('hold on a sec, im boiling...');
-        execFile('taskset', [
-            '-c', '0',
+        execFile('nice', [
+            '-n', '19',
             'ffmpeg',
             '-i', boilURL,
             '-i', pfp,
