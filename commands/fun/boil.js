@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, AttachmentBuilder } = require("discord.js"),
     { execFile } = require("child_process"),
-    boilURL = 'https://cdn.discordapp.com/attachments/1414149221665214496/1531359849344929975/20260727_135620.mp4?ex=6a7fffbf&is=6a7eae3f&hm=d8e7cde34fc05bd52808f8af39f4d0187da24ce425694d844b9b114833c005a0&',
+    boilURL = 'https://cdn.discordapp.com/attachments/1411289295070826496/1537817706626154586/20260727_1356201.mp4?ex=6a806bd8&is=6a7f1a58&hm=0b68cf5fd8cc0325de9c2718f5545355d07a4f2ea17382ec442d02a1811159e8&',
     commandCooldown = 1e3 * 60 * 15;
 
 let lastBoil = 0;
@@ -20,9 +20,7 @@ module.exports = {
         if (Date.now() - lastBoil < commandCooldown) return await interaction.reply('i need a break bro my cpu\'s getting fried, i\'ll be back <t:' + Math.floor((lastBoil + commandCooldown) / 1e3) + ':R>');
         lastBoil = Date.now();
         await interaction.reply('hold on a sec, im boiling...');
-        execFile('nice', [
-            '-n', '19',
-            'ffmpeg',
+        execFile('ffmpeg', [
             '-i', boilURL,
             '-i', pfp,
 
@@ -34,8 +32,8 @@ module.exports = {
             'enable=\'between(t,5,19)\'',
 
             '-c:v', 'libx264',
-            '-preset', 'veryfast',
-            '-threads', '2',
+            '-preset', 'ultrafast',
+            // '-threads', '0',
             '-pix_fmt', 'yuv420p',
 
             '-y',
