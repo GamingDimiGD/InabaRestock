@@ -15,7 +15,7 @@ module.exports = {
         )
     ,
     async execute(interaction) {
-        const { commandCooldown, boilURL } = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
+        const { boilCD: commandCooldown, boilURL } = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
         if (!boilURL) return await interaction.reply('boil url is not set in `config.json`, pls tell dimi about this');
         if (!interaction.options.getMentionable('user').user) return await interaction.reply('invite me to this server pls otherwise the command won\'t work for some reason');
         const pfp = interaction.options.getMentionable('user').user.displayAvatarURL({ format: 'png' });
