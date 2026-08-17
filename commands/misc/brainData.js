@@ -29,6 +29,7 @@ module.exports = {
                     name: i === 0 ? "Tiny Brain" : i === 1 ? "Small Brain" : i === 2 ? "Brain" : "Starter Brain",
                     value: `Size: ${toFileSize(Object.keys(b).length)}\nKeys: ${Object.keys(b).length}`,
                 }))
-            )
+        )
+        interaction.reply({ embeds: [embed] });
     },
 };
