@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, AttachmentBuilder } = require("discord.js"),
     { execFile } = require("child_process"),
-    fs = require("fs");
-
+    fs = require("fs"),
+    fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
 let lastBoil = 0;
 
 module.exports = {
@@ -25,6 +25,11 @@ module.exports = {
         lastBoil = Date.now();
         await interaction.reply('hold on a sec, im boiling...');
         console.log('[boil] Boiling ' + pfp);
+        let urlTest = await fetch(boilURL);
+        if (!urlTest.ok) {
+            console.log('[boil] Invalid boil url!');
+            return await interaction.editReply("`/boil`'s url is may be invalid, server responded with code " + urlTest.status);
+        }
         await execFile('ffmpeg', [
             '-i', boilURL,
             '-i', pfp,
