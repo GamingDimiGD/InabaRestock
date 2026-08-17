@@ -45,7 +45,7 @@ module.exports = {
             'output.mp4'
         ], async (error) => {
             if (error) {
-                await interaction.editReply({ content: 'error: ' + error.slice(0, 100) });
+                await interaction.editReply('error error on the wall')
                 return console.error(error);
             }
             console.log('[boil] Boiled!');
