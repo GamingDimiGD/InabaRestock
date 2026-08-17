@@ -6,7 +6,7 @@ let cache = {};
 
 const fetchPlushInfo = async () => {
     const { plushCacheCD } = JSON.parse(fs.readFileSync('./config.json', 'utf-8')) || 6e4
-    if (cache && Date.now() - cache.t < plushCacheCD) return;
+    if (cache && Date.now() - cache.t < plushCacheCD) return cache;
     const plushInfo = await fetch(URL).then(async res => {
         if (!res.ok) throw new Error(res.statusText)
         return await res.text()
@@ -22,6 +22,7 @@ const fetchPlushInfo = async () => {
         donors: $('p.backer.svelte-1005vm').text(),
         daysLeft: $('p.days-left.svelte-1005vm').text()
     };
+    return cache
 }
 
 module.exports = {
@@ -31,7 +32,7 @@ module.exports = {
     async execute(interaction) {
         await interaction.deferReply();
         try {
-            await fetchPlushInfo();
+            const cache = await fetchPlushInfo();
             const embed = new EmbedBuilder()
                 .setTitle("Osage Plush Info")
                 .setDescription("Information about the Osage Plush from Campfire")
