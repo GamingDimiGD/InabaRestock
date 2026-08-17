@@ -22,6 +22,7 @@ const fetchPlushInfo = async () => {
         donors: $('p.backer.svelte-1005vm').text(),
         daysLeft: $('p.days-left.svelte-1005vm').text()
     };
+    console.log(cache)
     return cache
 }
 
@@ -33,6 +34,7 @@ module.exports = {
         await interaction.deferReply();
         try {
             const cache = await fetchPlushInfo();
+            console.log(cache)
             const embed = new EmbedBuilder()
                 .setTitle("Osage Plush Info")
                 .setDescription("Information about the Osage Plush from Campfire")
