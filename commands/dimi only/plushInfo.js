@@ -17,6 +17,7 @@ module.exports = {
         .setDescription("fetch the info of the osage plush"),
     async execute(interaction) {
         try {
+            await interaction.deferReply();
             const $ = await fetchPlushInfo();
             const embed = new EmbedBuilder()
                 .setTitle("Osage Plush Info")
@@ -33,7 +34,11 @@ module.exports = {
                     value: $("p.days-left")[0].text()
                 }
                 )
-
-        } catch (error) { }
+                .setColor(0x2b2b2b)
+            interaction.editReply({ embeds: [embed] });
+        } catch (error) {
+            console.log(error);
+            interaction.editReply("Failed to fetch plush info: ```" + error.message + "```");
+        }
     }
 }
