@@ -25,13 +25,13 @@ module.exports = {
                 .setURL(URL)
                 .addFields({
                     name: "Money raised",
-                    value: $("p.backer-amount")[0].text().replace('円', '') + '/' + $("p.target-amount span")[0].text() + '円 (' + Math.round($("p.target-amount span")[0].text() / $("p.backer-amount")[0].text().replace('円', '') * 100) + '%)'
+                    value: $('p.backer-amount.svelte-1005vm').text().replace('円', '') + '/' + $("p.target-amount span").text() + '円 (' + Math.round($("p.backer-amount.svelte-1005vm").text() / $("p.target-amount span").text().replace('円', '') * 100) + '%)'
                 }, {
                     name: "Amount of donors",
-                    value: $("p.backer")[0].text()
+                    value: $("p.backer.svelte-1005vm").text()
                 }, {
                     name: "Days left",
-                    value: $("p.days-left")[0].text()
+                    value: $("p.days-left.svelte-1005vm").text()
                 }
                 )
                 .setColor(0x2b2b2b)
