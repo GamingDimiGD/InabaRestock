@@ -15,9 +15,10 @@ const toFileSize = (bytes) => {
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("brain-data")
-        .setDescription("Check current stock of inabakumori")
+        .setDescription("Check the brain data of the AI")
     ,
     async execute(interaction) {
+        await interaction.deferReply();
         const tinyBrain = JSON.parse(fs.readFileSync('./ai/tinyBrain.json', 'utf-8')),
             smallBrain = JSON.parse(fs.readFileSync('./ai/smallBrain.json', 'utf-8')),
             brain = JSON.parse(fs.readFileSync('./ai/brain.json', 'utf-8')),
@@ -30,6 +31,6 @@ module.exports = {
                     value: `Size: ${toFileSize(Object.keys(b).length)}\nKeys: ${Object.keys(b).length}`,
                 }))
         )
-        interaction.reply({ embeds: [embed] });
+        await interaction.editReply({ embeds: [embed] });
     },
 };
