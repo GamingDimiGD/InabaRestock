@@ -5,7 +5,9 @@ const { SlashCommandBuilder, EmbedBuilder } = require("discord.js"),
 let cache = {};
 
 const fetchPlushInfo = async () => {
-    const { plushCacheCD } = JSON.parse(fs.readFileSync('./config.json', 'utf-8')) || 6e4
+    let { plushCacheCD } = JSON.parse(fs.readFileSync('./config.json', 'utf-8'))
+    if (!plushCacheCD) plushCacheCD = 6e4
+    if (typeof plushCacheCD === 'string') plushCacheCD = parseInt(plushCacheCD);
     if (Object.keys(cache).length && Date.now() - cache.t < plushCacheCD) return cache;
     const plushInfo = await fetch(URL).then(async res => {
         if (!res.ok) throw new Error(res.statusText)
