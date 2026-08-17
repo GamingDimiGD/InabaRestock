@@ -8,7 +8,7 @@ module.exports = {
     ,
     async execute(interaction) {
         await interaction.deferReply();
-        let replyMessage = await reply(String.fromCharCode(Math.floor(Math.random() * 26) + 97), false).response;
+        let replyMessage = await reply('', false).response;
         await interaction.editReply(replyMessage.replaceAll(/<@[0-9]+>|<@&[0-9]+>/g, "[mention blocked]") || "i am merl and i dont know anything");
     }
 };
