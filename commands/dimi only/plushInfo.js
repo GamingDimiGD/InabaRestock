@@ -16,8 +16,8 @@ module.exports = {
         .setName("plush-info")
         .setDescription("fetch the info of the osage plush"),
     async execute(interaction) {
+        await interaction.deferReply();
         try {
-            await interaction.deferReply();
             const $ = await fetchPlushInfo();
             const embed = new EmbedBuilder()
                 .setTitle("Osage Plush Info")
@@ -25,7 +25,11 @@ module.exports = {
                 .setURL(URL)
                 .addFields({
                     name: "Money raised",
-                    value: $('p.backer-amount.svelte-1005vm').text().replace('円', '') + '/' + $("p.target-amount span").text() + '円 (' + Math.round($("p.backer-amount.svelte-1005vm").text() / $("p.target-amount span").text().replace('円', '') * 100) + '%)'
+                    value: $('p.backer-amount.svelte-1005vm').text().replace('円', '') + '/' + $("p.target-amount span").text() + '円 (' + Math.round(
+                        parseInt($("p.backer-amount.svelte-1005vm").text().replace('円', ''))
+                        /
+                        parseInt($("p.target-amount span").text().replace('円', '')) * 100
+                    ) + '%)'
                 }, {
                     name: "Amount of donors",
                     value: $("p.backer.svelte-1005vm").text()
