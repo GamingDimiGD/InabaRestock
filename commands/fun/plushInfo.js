@@ -6,13 +6,13 @@ let cache = {};
 
 const fetchPlushInfo = async () => {
     const { plushCacheCD } = JSON.parse(fs.readFileSync('./config.json', 'utf-8')) || 6e4
-    if (cache && Date.now() - cache.t < plushCacheCD) return cache;
+    if (Object.keys(cache).length && Date.now() - cache.t < plushCacheCD) return cache;
     const plushInfo = await fetch(URL).then(async res => {
         if (!res.ok) throw new Error(res.statusText)
         return await res.text()
     })
     const $ = cheerio.load(plushInfo);
-    if (!cache || Date.now() - cache.t > plushCacheCD) cache = {
+    if (!Object.keys(cache).length || Date.now() - cache.t > plushCacheCD) cache = {
         t: Date.now(),
         money: $('p.backer-amount.svelte-1005vm').text().replace('円', '') + '/' + $("p.target-amount span").text() + '円 (' + Math.round(
                         parseInt($("p.backer-amount.svelte-1005vm").text().replace('円', ''))
@@ -22,7 +22,6 @@ const fetchPlushInfo = async () => {
         donors: $('p.backer.svelte-1005vm').text(),
         daysLeft: $('p.days-left.svelte-1005vm').text()
     };
-    console.log(cache)
     return cache
 }
 
@@ -34,7 +33,6 @@ module.exports = {
         await interaction.deferReply();
         try {
             const cache = await fetchPlushInfo();
-            console.log(cache)
             const embed = new EmbedBuilder()
                 .setTitle("Osage Plush Info")
                 .setDescription("Information about the Osage Plush from Campfire")
