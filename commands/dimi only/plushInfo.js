@@ -2,13 +2,26 @@ const { SlashCommandBuilder, EmbedBuilder } = require("discord.js"),
     fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args)),
     URL = "https://camp-fire.jp/projects/970332/view",
     cheerio = require("cheerio");
+let cache = {};
 
 const fetchPlushInfo = async () => {
+    const { plushCacheCD } = JSON.parse(fs.readFileSync('./config.json', 'utf-8')) || 6e4
+    if (cache && Date.now() - cache.t < plushCacheCD) return;
     const plushInfo = await fetch(URL).then(async res => {
         if (!res.ok) throw new Error(res.statusText)
         return await res.text()
     })
-    return cheerio.load(plushInfo);
+    const $ = cheerio.load(plushInfo);
+    if (!cache || Date.now() - cache.t > plushCacheCD) cache = {
+        t: Date.now(),
+        money: $('p.backer-amount.svelte-1005vm').text().replace('円', '') + '/' + $("p.target-amount span").text() + '円 (' + Math.round(
+                        parseInt($("p.backer-amount.svelte-1005vm").text().replace('円', ''))
+                        /
+                        parseInt($("p.target-amount span").text().replace('円', '')) * 100
+        ) + '%)',
+        donors: $('p.backer.svelte-1005vm').text(),
+        daysLeft: $('p.days-left.svelte-1005vm').text()
+    };
 }
 
 module.exports = {
@@ -18,27 +31,25 @@ module.exports = {
     async execute(interaction) {
         await interaction.deferReply();
         try {
-            const $ = await fetchPlushInfo();
+            await fetchPlushInfo();
             const embed = new EmbedBuilder()
                 .setTitle("Osage Plush Info")
-                .setDescription("Information about the Osage Plush from Camp-Fire")
+                .setDescription("Information about the Osage Plush from Campfire")
                 .setURL(URL)
                 .addFields({
                     name: "Money raised",
-                    value: $('p.backer-amount.svelte-1005vm').text().replace('円', '') + '/' + $("p.target-amount span").text() + '円 (' + Math.round(
-                        parseInt($("p.backer-amount.svelte-1005vm").text().replace('円', ''))
-                        /
-                        parseInt($("p.target-amount span").text().replace('円', '')) * 100
-                    ) + '%)'
+                    value: cache.money
                 }, {
                     name: "Amount of donors",
-                    value: $("p.backer.svelte-1005vm").text()
+                    value: cache.donors
                 }, {
                     name: "Days left",
-                    value: $("p.days-left.svelte-1005vm").text()
+                    value: cache.daysLeft
                 }
                 )
                 .setColor(0x2b2b2b)
+                .setFooter({ text: "Last updated" })
+                .setTimestamp(cache.t);
             interaction.editReply({ embeds: [embed] });
         } catch (error) {
             console.log(error);
