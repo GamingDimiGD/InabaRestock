@@ -46,7 +46,7 @@ module.exports = {
         collector.on('end', collected => {
             if (collected.size === 0) {
                 interaction.editReply({
-                    content: `${user} has parried ${interaction.user}'s bullet!`,
+                    content: `${interaction.user} has shot ${user}!`,
                     components: [
                         new ActionRowBuilder().addComponents(
                             new ButtonBuilder()
