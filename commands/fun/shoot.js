@@ -28,13 +28,35 @@ module.exports = {
             if (i.user.id !== user.id) return await i.reply({ content: 'only the victim can parry bro', ephemeral: true });
             await i.deferUpdate();
             const rng = Math.floor(Math.random() * 10) + 1;
-            if (rng > 9) await i.editReply(`${user} has parried ${interaction.user}'s bullet!`)
-            else await i.editReply(`bro tried to parry a bullet lmao`);
+            let content = rng > 9 ? `${user} has parried ${interaction.user}'s bullet!` : `bro tried to parry a bullet lmao`
+            await i.editReply({
+                content,
+                components: [
+                    new ActionRowBuilder().addComponents(
+                        new ButtonBuilder()
+                            .setCustomId('parry')
+                            .setLabel('+PARRY')
+                            .setStyle(ButtonStyle.Danger)
+                            .setDisabled(true)
+                    )
+                ]
+            });
             collector.stop();
         });
         collector.on('end', collected => {
             if (collected.size === 0) {
-                console.log('[shoot] th is bro doing why didn\'t bro parry')
+                interaction.editReply({
+                    content: `${user} has parried ${interaction.user}'s bullet!`,
+                    components: [
+                        new ActionRowBuilder().addComponents(
+                            new ButtonBuilder()
+                                .setCustomId('parry')
+                                .setLabel('too late to parry lmao')
+                                .setStyle(ButtonStyle.Danger)
+                                .setDisabled(true)
+                        )
+                    ]
+                });
             }
         });
     }
