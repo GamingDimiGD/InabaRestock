@@ -12,6 +12,7 @@ module.exports = {
     ,
     async execute(interaction) {
         const user = interaction.options.getMentionable('user');
+        if (user.id === interaction.client.user.id) return await interaction.reply('you can\'t shoot me lmao, i\'m invincible and nobody can stop me boooo');
         const message = await interaction.reply({
             content: `${interaction.user} has shot ${user}!`, components: [
                 new ActionRowBuilder().addComponents(
