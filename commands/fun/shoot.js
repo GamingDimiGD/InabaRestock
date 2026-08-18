@@ -23,8 +23,9 @@ module.exports = {
                 )
             ]
         });
-        const collector = message.createMessageComponentCollector({ componentType: ComponentType.Button, time: 15000, filter: i => i.customId === 'parry' && i.user.id === interaction.user.id });
+        const collector = message.createMessageComponentCollector({ componentType: ComponentType.Button, time: 15000, filter: i => i.customId === 'parry' });
         collector.on('collect', async i => {
+            if (i.user.id !== interaction.user.id) return await i.reply({ content: 'only the victim can parry bro', ephemeral: true });
             await i.deferUpdate();
             const rng = Math.floor(Math.random() * 10) + 1;
             if (rng > 9) await i.editReply(`${user} has parried ${interaction.user}'s shot!`)
