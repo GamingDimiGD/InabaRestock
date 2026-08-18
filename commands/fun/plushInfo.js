@@ -25,7 +25,6 @@ const fetchPlushInfo = async () => {
         "Days left": $('p.days-left.svelte-1005vm').text(),
         "Followers or likes or whatever": $('.follow-button > span.count').text()
     };
-    console.log(cache)
     return cache
 }
 
@@ -37,20 +36,12 @@ module.exports = {
         await interaction.deferReply();
         try {
             const cache = await fetchPlushInfo();
-            console.log(Object.keys(cache).map(k => {
-                        if (k === "t") return;
-                        return {
-                            name: k,
-                            value: cache[k]
-                        }
-                    }))
             const embed = new EmbedBuilder()
                 .setTitle("Osage Plush Info")
                 .setDescription("Information about the Osage Plush from Campfire")
                 .setURL(URL)
                 .addFields(
-                    Object.keys(cache).map(k => {
-                        if (k === "t") return;
+                    ...Object.keys(cache).filter(k => k !== "t").map(k => {
                         return {
                             name: k,
                             value: cache[k]
