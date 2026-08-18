@@ -16,13 +16,14 @@ const fetchPlushInfo = async () => {
     const $ = cheerio.load(plushInfo);
     if (!Object.keys(cache).length || Date.now() - cache.t > plushCacheCD) cache = {
         t: Date.now(),
-        money: $('p.backer-amount.svelte-1005vm').text().replace('円', '') + '/' + $("p.target-amount span").text() + '円 (' + Math.round(
+        "Money raised": $('p.backer-amount.svelte-1005vm').text().replace('円', '') + '/' + $("p.target-amount span").text() + '円 (' + Math.round(
                         parseInt($("p.backer-amount.svelte-1005vm").text().replace('円', ''))
                         /
                         parseInt($("p.target-amount span").text().replace('円', '')) * 100
         ) + '%)',
-        donors: $('p.backer.svelte-1005vm').text(),
-        daysLeft: $('p.days-left.svelte-1005vm').text()
+        "Donor amount": $('p.backer.svelte-1005vm').text(),
+        "Days left": $('p.days-left.svelte-1005vm').text(),
+        "Followers or likes or whatever": $('.follow-button > span.count').text()
     };
     return cache
 }
@@ -39,16 +40,14 @@ module.exports = {
                 .setTitle("Osage Plush Info")
                 .setDescription("Information about the Osage Plush from Campfire")
                 .setURL(URL)
-                .addFields({
-                    name: "Money raised",
-                    value: cache.money
-                }, {
-                    name: "Amount of donors",
-                    value: cache.donors
-                }, {
-                    name: "Days left",
-                    value: cache.daysLeft
-                }
+                .addFields(
+                    Object.keys(cache).map(k => {
+                        if (k === "t") return;
+                        return {
+                            name: k,
+                            value: cache[k]
+                        }
+                    })
                 )
                 .setColor(0x2b2b2b)
                 .setFooter({ text: "Last updated" })
