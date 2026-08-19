@@ -57,7 +57,7 @@ module.exports = {
                 new EmbedBuilder()
                     .setTitle(name)
                     .setImage(imageUrl)
-                    .setDescription(`submitted by ${submitter ? `**${submitter?.globalName}**` : `unknown user id \`${submitted_by}\``}${artist ? `\nartist(s): ${artist}` : ""}${edited_by ? `\nmeme created by: ${edited_by}` : ""}${searchName ? `\nsearch-friendly name: ${searchName}` : ""}\nthis is osagery number ${number} of ${imageDataList.length}`)
+                    .setDescription(`submitted by ${submitter ? `**${submitter?.globalName}**` : `unknown user id \`${submitted_by}\``}${artist ? `\nartist(s): ${artist}` : ""}${edited_by ? `\nedited by: ${edited_by}` : ""}${searchName ? `\nsearch-friendly name: ${searchName}` : ""}\nthis is osagery number ${number} of ${imageDataList.length}`)
                     .setColor('#b2b2b2')
         ] });
     }
