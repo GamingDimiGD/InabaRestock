@@ -117,10 +117,13 @@ module.exports = {
             }
         }
 
-
+        const date = new Date(message.createdTimestamp).setHours(new Date().getUTCHours() + 8, new Date().getUTCMinutes(), new Date().getUTCSeconds(), new Date().getUTCMilliseconds());
         if (
-            // message.mentions.has(message.client.user) || !message.guild
-            message.channel.id == trainChannel
+            (
+                message.mentions.has(message.client.user) &&
+                new Date(date).getDate() == 29 && new Date(date).getMonth() == 7 // 8/29
+            )
+            || message.channel.id == trainChannel
         ) {
             if (checkProfanity(message.content).containsProfanity) {
                 return message.reply("woah woah woah don't swear dude")

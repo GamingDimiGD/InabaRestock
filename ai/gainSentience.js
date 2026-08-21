@@ -78,7 +78,7 @@ const pickKey = (obj) => {
         if ((r -= count) <= 0) return { word, entries }
     }
 }
-
+let changesMade = false
 const learn = async (sentence) => {
     if (!sentence || sentence.split(/\s+/).length < 3) return;
     const words = sentence.toLowerCase().split(/\s+/).filter(f => {
@@ -108,23 +108,26 @@ const learn = async (sentence) => {
             createKey(tinyBrain, w3, next)
         }
     }
+    changesMade = true
     console.log('[AI] Learned sentence: ', sentence)
     console.log('[AI] Brains\' size: ', Object.keys(brain).length + Object.keys(smallBrain).length + Object.keys(tinyBrain).length)
 }
 
-const save = async () => {
+const save = () => {
+    if (!changesMade) return setTimeout(save, parseInt(JSON.parse(fs.readFileSync('./config.json', 'utf-8')).brainSaveInterval) * 1e3);
     console.log('[AI] Autosaving...')
-    await fs.writeFileSync("./ai/c.json", JSON.stringify({ t: Date.now() }))
+    fs.writeFileSync("./ai/c.json", JSON.stringify({ t: Date.now() }))
     if (!cHandler.t) return console.error("[AI] Storage error detected, aborting saving functions")
     fs.writeFileSync('./ai/brain.json', JSON.stringify(brain))
     fs.writeFileSync('./ai/smallBrain.json', JSON.stringify(smallBrain))
     fs.writeFileSync('./ai/tinyBrain.json', JSON.stringify(tinyBrain))
     fs.writeFileSync('./ai/starterBrain.json', JSON.stringify(starterBrain));
     console.log('[AI] Autosaved!')
+    changesMade = false
     setTimeout(save, parseInt(JSON.parse(fs.readFileSync('./config.json', 'utf-8')).brainSaveInterval) * 1e3)
 }
 
-save()
+setTimeout(save, parseInt(JSON.parse(fs.readFileSync('./config.json', 'utf-8')).brainSaveInterval) * 1e3)
 
 const findBestKey = (keywords) => {
     keywords = keywords.filter(w => !filler.includes(w));
