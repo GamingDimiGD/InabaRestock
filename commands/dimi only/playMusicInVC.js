@@ -14,6 +14,10 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('play-music-in-vc')
         .setDescription('Plays music in vc')
+        .addNumberOption(option =>
+            option.setName('volume')
+                .setDescription('The volume to set (0-1)')
+        )
     ,
     async execute(interaction) {
         const channel = interaction.member.voice.channel;
@@ -45,6 +49,7 @@ module.exports = {
             await interaction.editReply('downloaded music in ' + (Date.now() - now) + 'ms');
         }
         const resource = createAudioResource(path.startsWith('http') ? './music.mp3' : path);
+        resource.volume.setVolume(interaction.options.getNumber('volume') || 0.5);
 
         player.on('stateChange', (oldState, newState) => {
             console.log(
