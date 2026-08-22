@@ -31,8 +31,10 @@ module.exports = {
         const text = interaction.options.getString('text');
         const voicebank = interaction.options.getInteger('voicebank') || JSON.parse(fs.readFileSync('./config.json', 'utf8')).defaultVB || 108;
         const url = `https://api.tts.quest/v3/voicevox/synthesis?text=${encodeURIComponent(text)}&speaker=${voicebank}`;
+        await interaction.editReply('fetching tts...');
         const response = await fetch(url);
         if (!response.ok) return await interaction.editReply('error while fetching tts: ```' + response.statusText + '```');
+        await interaction.editReply('fetched tts, fetching mp3...');
         const tts = (await response.json()).mp3DownloadUrl
         let ttsFetch = await fetch(tts);
         if (!ttsFetch.ok) {
