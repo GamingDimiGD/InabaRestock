@@ -48,7 +48,9 @@ module.exports = {
             fs.writeFileSync('./music.mp3', Buffer.from(await response.arrayBuffer()));
             await interaction.editReply('downloaded music in ' + (Date.now() - now) + 'ms');
         }
-        const resource = createAudioResource(path.startsWith('http') ? './music.mp3' : path);
+        const resource = createAudioResource(path.startsWith('http') ? './music.mp3' : path, {
+            inlineVolume: true
+        });
         resource.volume.setVolume(interaction.options.getNumber('volume') || 0.5);
 
         player.on('stateChange', (oldState, newState) => {
