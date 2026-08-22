@@ -139,7 +139,12 @@ const findBestKey = (keywords) => {
         }, 0) + (starterBrain[key] ? 2 : 0)
         return { score, key }
     })
-    bestScore = Math.max(...scores.map(s => s.score))
+    for (let score of scores) {
+        if (score.score > bestScore) {
+            bestScore = score.score
+            best = score.key
+        }
+    }
     if (bestScore === 0) return { best: null, bestOnes: [], bestScore };
     const bestOnes = scores.filter(s => s.score === bestScore)
     best = bestOnes[Math.floor(Math.random() * bestOnes.length)]?.key
