@@ -33,6 +33,7 @@
     "glin-profanity": "^3.3.0",
     "google-tts-api": "^2.0.2",
     "node-fetch": "^3.3.2",
+    "opusscript": "^0.0.8",
     "string-similarity-js": "^2.1.4"
   }
 }
