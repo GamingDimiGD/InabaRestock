@@ -4,7 +4,52 @@ const {
     createAudioResource
 } = require('@discordjs/voice'),
     fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args)),
+    { spawn } = require('child_process'),
+    fs = require('fs'),
     { SlashCommandBuilder, MessageFlags } = require('discord.js')
+
+const fetchVOICEVOX = async (text, voicebank) => {
+    const url = `https://api.tts.quest/v3/voicevox/synthesis?text=${encodeURIComponent(text)}&speaker=${voicebank}`;
+    const fetched = await fetch(url);
+    if (!fetched.ok) return console.log('error while fetching tts: ```' + fetch.statusText + '```');
+    const tts = (await fetched.json()).mp3DownloadUrl
+    let ttsFetch = await fetch(tts)
+    if (!ttsFetch.ok) {
+        let limit = 20
+        return new Promise((resolve, reject) => {
+            let interval = setInterval(async () => {
+                if (limit-- < 0) {
+                    reject();
+                    return clearInterval(interval);
+                }
+                console.log("failed to fetch tts, retrying... (" + limit + " tries left)");
+                ttsFetch = await fetch(tts);
+                if (ttsFetch.ok) {
+                    fs.writeFileSync('./tts.mp3', Buffer.from(await ttsFetch.arrayBuffer()));
+                    console.log('fetched and downloaded tts, checking for corruption...');
+                    const ffmpeg = spawn('ffmpeg', [
+                        '-v', 'error',
+                        '-i', 'tts.mp3',
+                        '-f', 'null',
+                        '-'
+                    ]);
+                    let isCorrupted = false;
+                    ffmpeg.on('close', code => {
+                        if (code !== 0) {
+                            console.log('tts is corrupted, retrying...');
+                            isCorrupted = true;
+                            return;
+                        }
+                    })
+                    if (!isCorrupted) {
+                        clearInterval(interval);
+                        resolve();
+                    }
+                }
+            }, 1e4)
+        })
+    }
+}
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -20,42 +65,17 @@ module.exports = {
                 .setDescription('The voicebank')
         ),
     async execute(interaction) {
-        await interaction.deferReply();
         const voiceChannel = interaction.member.voice.channel;
         const connection = joinVoiceChannel({
             channelId: voiceChannel.id,
             guildId: voiceChannel.guild.id,
             adapterCreator: voiceChannel.guild.voiceAdapterCreator
         })
+        if (!connection) return interaction.editReply({ content: 'join vc first', flags: MessageFlags.Ephemeral });
+        await interaction.deferReply();
         const player = createAudioPlayer();
-        const text = interaction.options.getString('text');
-        const voicebank = interaction.options.getInteger('voicebank') || JSON.parse(fs.readFileSync('./config.json', 'utf8')).defaultVB || 108;
-        const url = `https://api.tts.quest/v3/voicevox/synthesis?text=${encodeURIComponent(text)}&speaker=${voicebank}`;
-        await interaction.editReply('fetching tts...');
-        const response = await fetch(url);
-        if (!response.ok) return await interaction.editReply('error while fetching tts: ```' + response.statusText + '```');
-        await interaction.editReply('fetched tts, fetching mp3...');
-        const tts = (await response.json()).mp3DownloadUrl
-        let ttsFetch = await fetch(tts);
-        if (!ttsFetch.ok) {
-            let limit = 10
-            await new Promise((resolve, reject) => {
-                let interval = setInterval(async () => {
-                    if (limit-- < 0) {
-                        reject();
-                        return clearInterval(interval);
-                    }
-                    await interaction.editReply("failed to fetch tts, retrying... (" + limit + " tries left)");
-                    ttsFetch = await fetch(tts);
-                    if (ttsFetch.ok) {
-                        resolve();
-                        return clearInterval(interval);
-                    }
-                }, 2e3)
-            })
-            if (!ttsFetch.ok) return await interaction.editReply("failed after 10 tries, aborting the command");
-        }
-        const resource = createAudioResource(tts);
+        const tts = await fetchVOICEVOX(interaction.options.getString('text'), interaction.options.getInteger('voicebank') ?? JSON.parse(fs.readFileSync('./config.json', 'utf8')).defaultVB ?? 108);
+        const resource = createAudioResource('tts.mp3');
         player.play(resource);
         connection.subscribe(player);
         await interaction.editReply('speaking rn');
