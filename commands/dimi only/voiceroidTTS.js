@@ -3,7 +3,6 @@ const {
     createAudioPlayer,
     createAudioResource
 } = require('@discordjs/voice'),
-    fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args)),
     { spawn } = require('child_process'),
     fs = require('fs'),
     { SlashCommandBuilder, MessageFlags } = require('discord.js')
