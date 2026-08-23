@@ -12,7 +12,7 @@ module.exports = {
         )
         .addStringOption(option =>
             option.setName('message')
-                .setDescription('The message to add')
+                .setDescription('The message to add (\\n = newline)')
                 .setRequired(true)
         )
         .addStringOption(option =>
@@ -29,7 +29,7 @@ module.exports = {
     ,
     async execute(interaction) {
         const type = interaction.options.getString('type');
-        const message = interaction.options.getString('message');
+        const message = interaction.options.getString('message').replaceAll('\\n', '\n');
         const triggers = interaction.options.getString('triggers').split(',').map(s => s.trim());
         const secretResponses = JSON.parse(fs.readFileSync('./data/secretAutoResponses.json', 'utf8'));
         secretResponses.push({ response: message, triggers, type, discovered: false });
