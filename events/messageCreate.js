@@ -34,6 +34,13 @@ const validURLStarters = [
 const cHandler = fs.existsSync('./ai/c.json') ? JSON.parse(fs.readFileSync('./ai/c.json', 'utf-8')) : {},
     playlist = JSON.parse(fs.readFileSync('./events/playlist.json', 'utf-8'));
 exports.cHandler = cHandler;
+const today = (month, day) => {
+    const date = new Date(message.createdTimestamp).setHours(new Date().getUTCHours() + 8, new Date().getUTCMinutes(), new Date().getUTCSeconds(), new Date().getUTCMilliseconds());
+    return (
+        new Date(date).getMonth() == month - 1 &&
+        new Date(date).getDate() == day
+    )
+}
 
 module.exports = {
     name: Events.MessageCreate,
@@ -117,11 +124,11 @@ module.exports = {
             }
         }
 
-        const date = new Date(message.createdTimestamp).setHours(new Date().getUTCHours() + 8, new Date().getUTCMinutes(), new Date().getUTCSeconds(), new Date().getUTCMilliseconds());
+
         if (
             (
                 message.mentions.has(message.client.user) &&
-                new Date(date).getDate() == 29 && new Date(date).getMonth() == 7 // 8/29
+                today(8, 29)
             )
             || message.channel.id == trainChannel
         ) {
@@ -162,6 +169,9 @@ module.exports = {
         if (deadChatChannelID == message.channel.id && !message.mentions.has(message.client.user)
             && !checkProfanity(message.content).containsProfanity
         ) {
+            if (today(12, 4)) {
+                message.react("🍎")
+            }
             const msg = message.content.replaceAll(/<@(&|)[0-9]+>/g, "").replaceAll(/http(s|)m:\/\/\S*/g, "");
             if (msg.split(/\s+/).length > 3) learn(msg);
         }
@@ -231,5 +241,5 @@ module.exports = {
             console.error(`[Discord] Error processing autoResponse: ${error}`);
         }
     },
-    pageLength
+    pageLength, today, cHandler
 };
