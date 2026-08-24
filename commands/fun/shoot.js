@@ -28,7 +28,7 @@ module.exports = {
             if (i.user.id !== user.id) return await i.reply({ content: 'only the victim can parry bro', ephemeral: true });
             await i.deferUpdate();
             const rng = Math.floor(Math.random() * 10) + 1;
-            let content = rng > 9 ? `${user} has parried ${interaction.user}'s bullet!` : `bro tried to parry a bullet lmao`
+            let content = rng > 0 ? `${user} has parried ${interaction.user}'s bullet!` : `bro tried to parry a bullet lmao`
             await i.editReply({
                 content,
                 components: [
