@@ -34,8 +34,8 @@ const validURLStarters = [
 const cHandler = fs.existsSync('./ai/c.json') ? JSON.parse(fs.readFileSync('./ai/c.json', 'utf-8')) : {},
     playlist = JSON.parse(fs.readFileSync('./events/playlist.json', 'utf-8'));
 exports.cHandler = cHandler;
-const today = (month, day, timestamp = Date.now()) => {
-    const date = new Date(timestamp).setHours(new Date().getUTCHours() + 8, new Date().getUTCMinutes(), new Date().getUTCSeconds(), new Date().getUTCMilliseconds());
+const today = (month, day, timestamp = Date.now(), timezone = 8 /* UTC+8 */) => {
+    const date = new Date(timestamp).setHours(new Date().getUTCHours() + timezone, new Date().getUTCMinutes(), new Date().getUTCSeconds(), new Date().getUTCMilliseconds());
     return (
         new Date(date).getMonth() == month - 1 &&
         new Date(date).getDate() == day
@@ -169,7 +169,7 @@ module.exports = {
         if (deadChatChannelID == message.channel.id && !message.mentions.has(message.client.user)
             && !checkProfanity(message.content).containsProfanity
         ) {
-            if (today(12, 4, message.createdTimestamp)) {
+            if (today(12, 4, message.createdTimestamp) || (today(9, 16, message.createdTimestamp, -3) && message.author.id == "1502008003870593108")) {
                 message.react("🍎")
             }
             const msg = message.content.replaceAll(/<@(&|)[0-9]+>/g, "").replaceAll(/http(s|)m:\/\/\S*/g, "");
