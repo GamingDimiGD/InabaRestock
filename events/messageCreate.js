@@ -169,7 +169,7 @@ module.exports = {
         if (deadChatChannelID == message.channel.id && !message.mentions.has(message.client.user)
             && !checkProfanity(message.content).containsProfanity
         ) {
-            if (today(12, 4, message.createdTimestamp) || (today(9, 16, message.createdTimestamp, -3) && message.author.id == "1502008003870593108")) {
+            if (today(12, 4, message.createdTimestamp) || (today(9, 16, message.createdTimestamp, -5) && message.author.id == "1502008003870593108")) {
                 message.react("🍎")
             }
             const msg = message.content.replaceAll(/<@(&|)[0-9]+>/g, "").replaceAll(/http(s|)m:\/\/\S*/g, "");
