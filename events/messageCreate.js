@@ -172,7 +172,7 @@ module.exports = {
             if (today(12, 4, message.createdTimestamp)) {
                 message.react("🍎")
             }
-            if (today(9, 16, message.createdTimestamp, -5) && message.author.id == "1502008003870593108") {
+            if (today(9, 16, message.createdTimestamp, -3) && message.author.id == "1502008003870593108") {
                 message.react("🍎")
                 message.react("1453721037324812289")
             }
