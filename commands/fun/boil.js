@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, AttachmentBuilder, InteractionContextType } = require("discord.js"),
+const { SlashCommandBuilder, AttachmentBuilder } = require("discord.js"),
     { execFile } = require("child_process"),
     fs = require("fs"),
     fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
@@ -8,10 +8,6 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName("boil")
         .setDescription("Creates a video of someone boiling the mentioned user's pfp")
-        .setContexts(
-            InteractionContextType.Guild,
-            InteractionContextType.PrivateChannel
-        )
         .addMentionableOption(option =>
             option.setName("user")
                 .setDescription("The user to boil")

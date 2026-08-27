@@ -1,14 +1,9 @@
-const { SlashCommandBuilder, InteractionContextType } = require("discord.js");
+const { SlashCommandBuilder } = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("solve-quadratic")
         .setDescription("Does your math homework, a, b, c as in ax^2 + bx + c = 0")
-        .setContexts(
-            InteractionContextType.Guild,
-            InteractionContextType.PrivateChannel,
-            InteractionContextType.BotDM
-        )
         .addIntegerOption(option =>
             option.setName("a")
                 .setDescription("The first number")

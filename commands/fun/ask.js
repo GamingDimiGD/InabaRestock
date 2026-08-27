@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, InteractionContextType } = require("@discordjs/builders");
+const { SlashCommandBuilder } = require("discord.js");
 const { reply } = require("../../ai/gainSentience.js");
 
 const trustedUsers = ['766856785444864010', '1331943032500518976']
@@ -7,11 +7,6 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName("ask")
         .setDescription("Ask a question to the pea-brained AI")
-        .setContexts(
-            InteractionContextType.Guild,
-            InteractionContextType.PrivateChannel,
-            InteractionContextType.BotDM
-        )
         .addStringOption(option =>
             option.setName("question")
                 .setDescription("The question to ask")

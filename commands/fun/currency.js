@@ -1,14 +1,9 @@
-const { SlashCommandBuilder, EmbedBuilder, InteractionContextType } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("currency")
         .setDescription("Check exchange rates")
-        .setContexts(
-            InteractionContextType.Guild,
-            InteractionContextType.PrivateChannel,
-            InteractionContextType.BotDM
-        )
         .addNumberOption(option =>
             option.setName('amount')
                 .setDescription('The amount to convert')

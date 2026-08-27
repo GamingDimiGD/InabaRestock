@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, InteractionContextType } = require("discord.js"),
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js"),
     fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args)),
     URL = "https://camp-fire.jp/projects/970332/view",
     cheerio = require("cheerio");
@@ -17,9 +17,9 @@ const fetchPlushInfo = async () => {
     if (!Object.keys(cache).length || Date.now() - cache.t > plushCacheCD) cache = {
         t: Date.now(),
         "Money raised": $('p.backer-amount.svelte-1005vm').text().replace('円', '') + '/' + $("p.target-amount span").text() + '円 (' + Math.round(
-            parseInt($("p.backer-amount.svelte-1005vm").text().replace('円', ''))
-            /
-            parseInt($("p.target-amount span").text().replace('円', '')) * 100
+                        parseInt($("p.backer-amount.svelte-1005vm").text().replace('円', ''))
+                        /
+                        parseInt($("p.target-amount span").text().replace('円', '')) * 100
         ) + '%)',
         "Donor amount": $('p.backer.svelte-1005vm').text(),
         "Days left": $('p.days-left.svelte-1005vm').text(),
@@ -31,12 +31,7 @@ const fetchPlushInfo = async () => {
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("plush-info")
-        .setDescription("fetch the info of the osage plush")
-        .setContexts(
-            InteractionContextType.Guild,
-            InteractionContextType.PrivateChannel,
-            InteractionContextType.BotDM
-        ),
+        .setDescription("fetch the info of the osage plush"),
     async execute(interaction) {
         await interaction.deferReply();
         try {

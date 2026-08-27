@@ -1,20 +1,15 @@
-const { SlashCommandBuilder, InteractionContextType } = require("discord.js");
+const { SlashCommandBuilder } = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("temperature")
         .setDescription("Converts temperatures into each other")
-        .setContexts(
-            InteractionContextType.Guild,
-            InteractionContextType.PrivateChannel,
-            InteractionContextType.BotDM
-        )
         .addStringOption(option =>
             option.setName("number")
                 .setDescription("The number of the unit")
                 .setRequired(true)
         )
-        .addStringOption(option =>
+        .addStringOption(option => 
             option.setName('from')
                 .setDescription('The unit to convert from')
                 .setRequired(true)

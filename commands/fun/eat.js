@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, InteractionContextType } = require("discord.js");
+const { SlashCommandBuilder } = require("discord.js");
 
 const tastinessArray = [
     "so awful that i struggle to even comprehend the fact that i'm eating them. when i was little i always thought school food was the worst food on the big dirt ball called earth",
@@ -18,10 +18,6 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName("eat")
         .setDescription("eat someone")
-        .setContexts(
-            InteractionContextType.Guild,
-            InteractionContextType.PrivateChannel
-        )
         .addMentionableOption(option =>
             option.setName("user")
                 .setDescription("The user to eat")
