@@ -1,4 +1,4 @@
-const { Events, REST, Routes, AttachmentBuilder } = require('discord.js');
+const { Events, REST, Routes } = require('discord.js');
 const { getItems, commands, checkDuration, dimiOnlyCommands } = require("../index.js");
 const { gainSentience } = require('../ai/gainSentience.js');
 const fs = require('fs'), path = require('path');
@@ -44,15 +44,23 @@ module.exports = {
         checkDeadChat()
 
         const rest = new REST().setToken(process.env.TOKEN);
-        console.log(`[Discord] Started refreshing dimiOnlyCommands`);
         try {
-            const data = await rest.put(
-                Routes.applicationGuildCommands(process.env.CLIENT_ID, '1410959974842236930'),
-                { body: dimiOnlyCommands },
-            );
-            console.log(`[Discord] Registered ${data.length} application (/) commands`);
-        } catch (err) {
-            console.error(`[Discord] Failed to register dimiOnlyCommands:`, err);
+            console.log(`[Discord] Started refreshing ${commands.length} application (/) commands.`);
+            for (const [guildId, guild] of client.guilds.cache) {
+                try {
+                    const data = await rest.put(
+                        Routes.applicationGuildCommands(process.env.CLIENT_ID, guildId),
+                        { body: guildId === '1410959974842236930' ? dimiOnlyCommands.concat(commands) : commands },
+                    );
+                    console.log(`[Discord] Registered ${data.length} application (/) commands for server ${guild.name}`);
+                } catch (err) {
+                    console.error(`[Discord] Failed to register application (/) commands for server ${guild.name}:`, err);
+                }
+            }
+
+            console.log(`[Discord] Successfully reloaded application (/) commands through ${client.guilds.cache.size} servers.`);
+        } catch (error) {
+            console.error(error);
         }
         try {
             console.log('[Discord] Started refreshing global application (/) commands.');

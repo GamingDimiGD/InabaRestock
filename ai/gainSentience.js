@@ -208,7 +208,7 @@ const reply = (input, learns = true) => {
     if (response.join(' ') === words.join(' ').toLowerCase())
         return reply(Object.keys(brain)[Math.floor(Math.random() * Object.keys(brain).length)])
     return {
-        response: response.join(' '),
+        response: response.join(' ').replaceAll('@everyone', 'everyone').replaceAll('@here', 'here'),
         metadata
     }
 }
