@@ -1,9 +1,14 @@
-const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require("discord.js");
+const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType } = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("dice")
         .setDescription("Rolls a dice")
+        .setContexts(
+            InteractionContextType.Guild,
+            InteractionContextType.PrivateChannel,
+            InteractionContextType.BotDM
+        )
         .addIntegerOption(option =>
             option.setName("sides")
                 .setDescription("The number of sides")
@@ -12,7 +17,7 @@ module.exports = {
     async execute(interaction) {
         const sides = interaction.options.getInteger("sides") || 6;
         const result = Math.floor(Math.random() * sides) + 1;
-        
+
         const row = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
                 .setCustomId("roll_again")

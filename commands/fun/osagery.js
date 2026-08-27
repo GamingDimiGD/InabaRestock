@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js'),
+const { SlashCommandBuilder, EmbedBuilder, InteractionContextType } = require('discord.js'),
     fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args)),
     URL = "https://gamingdimigd.github.io/InabaRestockImageDB/",
     { stringSimilarity } = require('string-similarity-js');
@@ -13,6 +13,11 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('osagery')
         .setDescription('osage + imagery = osagery, get a random osage/inabakumori or related image')
+        .setContexts(
+            InteractionContextType.Guild,
+            InteractionContextType.PrivateChannel,
+            InteractionContextType.BotDM
+        )
         .addStringOption(option =>
             option.setName('search')
                 .setDescription('search for specific osagery by name')
@@ -31,7 +36,7 @@ module.exports = {
         }).then(res => res.text()).then(text => JSON.parse(text));
         if (!imageDataList || !imageDataList.length) return interaction.editReply("something broke lmao");
         let number = (interaction.options.getInteger('number')
-            ?? findBestMatch(interaction.options.getString('search'), imageDataList) + 1) 
+            ?? findBestMatch(interaction.options.getString('search'), imageDataList) + 1)
             || Math.floor(Math.random() * imageDataList.length) + 1
         if (number > imageDataList.length || number < 1) return interaction.editReply(`invalid number, must be between 1 and ${imageDataList.length}`);
         let { name, submitted_by, artist, edited_by, searchName } = imageDataList[number - 1];
@@ -59,6 +64,7 @@ module.exports = {
                     .setImage(imageUrl)
                     .setDescription(`submitted by ${submitter ? `**${submitter?.globalName}**` : `unknown user id \`${submitted_by}\``}${artist ? `\nartist(s): ${artist}` : ""}${edited_by ? `\nedited by: ${edited_by}` : ""}${searchName ? `\nsearch-friendly name: ${searchName}` : ""}\nthis is osagery number ${number} of ${imageDataList.length}`)
                     .setColor('#b2b2b2')
-        ] });
+            ]
+        });
     }
 }

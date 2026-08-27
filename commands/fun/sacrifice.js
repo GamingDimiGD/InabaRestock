@@ -1,9 +1,13 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, InteractionContextType } = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("sacrifice")
         .setDescription("Sacrifice a user to the inabakumori gods (this will @mention them)")
+        .setContexts(
+            InteractionContextType.Guild,
+            InteractionContextType.PrivateChannel
+        )
         .addMentionableOption(option =>
             option.setName("user")
                 .setDescription("The user to sacrifice")
@@ -12,8 +16,8 @@ module.exports = {
         .addBooleanOption(option =>
             option.setName('green')
                 .setDescription('Sacrifice to the greenabakumori gods?')
-                
-    )
+
+        )
     ,
     async execute(interaction) {
         const user = interaction.options.getMentionable('user');

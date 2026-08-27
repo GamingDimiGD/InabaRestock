@@ -1,10 +1,15 @@
-const { SlashCommandBuilder } = require("@discordjs/builders");
+const { SlashCommandBuilder, InteractionContextType } = require("@discordjs/builders");
 const { reply } = require("../../ai/gainSentience.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("sentence")
         .setDescription("Generate a sentence without prompt")
+        .setContexts(
+            InteractionContextType.Guild,
+            InteractionContextType.PrivateChannel,
+            InteractionContextType.BotDM
+        )
     ,
     async execute(interaction) {
         await interaction.deferReply();

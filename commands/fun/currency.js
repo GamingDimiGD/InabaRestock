@@ -1,24 +1,29 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder, InteractionContextType } = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("currency")
         .setDescription("Check exchange rates")
-        .addNumberOption(option => 
+        .setContexts(
+            InteractionContextType.Guild,
+            InteractionContextType.PrivateChannel,
+            InteractionContextType.BotDM
+        )
+        .addNumberOption(option =>
             option.setName('amount')
                 .setDescription('The amount to convert')
                 .setRequired(true)
         )
-        .addStringOption(option => 
+        .addStringOption(option =>
             option.setName('from')
                 .setDescription('The currency to convert from')
                 .setRequired(true)
-    )
-        .addStringOption(option => 
+        )
+        .addStringOption(option =>
             option.setName('to')
                 .setDescription('The currency or currencies to convert to (split with comma if multiple)')
                 .setRequired(true)
-    ),
+        ),
     async execute(interaction) {
         const amount = interaction.options.getNumber('amount'),
             from = interaction.options.getString('from').toUpperCase(), to = interaction.options.getString('to').toUpperCase(),
@@ -37,7 +42,7 @@ module.exports = {
             .setColor(0x2b2b2b)
             .setDescription(
                 res.map(e => `${e.quote}: ${(e.rate * amount).toFixed(3)}`).join('\n')
-        )
+            )
         interaction.editReply({ embeds: [embed] });
     }
 };

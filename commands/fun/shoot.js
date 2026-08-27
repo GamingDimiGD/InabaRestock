@@ -1,9 +1,13 @@
-const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require("discord.js");
+const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, InteractionContextType } = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("shoot")
         .setDescription("Shoot someone")
+        .setContexts(
+            InteractionContextType.Guild,
+            InteractionContextType.PrivateChannel
+        )
         .addMentionableOption(option =>
             option.setName("user")
                 .setDescription("The user to shoot")

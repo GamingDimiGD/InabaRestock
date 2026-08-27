@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js"),
+const { SlashCommandBuilder, EmbedBuilder, InteractionContextType } = require("discord.js"),
     fs = require("fs"),
     { stringSimilarity } = require('string-similarity-js');
 
@@ -13,6 +13,11 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName("song")
         .setDescription("Get a random Inabakumori Song (Sorted by BPM)")
+        .setContexts(
+            InteractionContextType.Guild,
+            InteractionContextType.PrivateChannel,
+            InteractionContextType.BotDM
+        )
         .addIntegerOption(option =>
             option.setName("number")
                 .setDescription("Get specific song by number")

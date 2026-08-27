@@ -1,9 +1,13 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, InteractionContextType } = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("abyss")
         .setDescription("Drags a user to the hadal abyss zone (this will @mention them)")
+        .setContexts(
+            InteractionContextType.Guild,
+            InteractionContextType.PrivateChannel
+        )
         .addMentionableOption(option =>
             option.setName("user")
                 .setDescription("The user to drag")
