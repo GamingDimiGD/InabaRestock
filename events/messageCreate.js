@@ -183,16 +183,16 @@ module.exports = {
             if (message.guild && Object.keys(autoResponseServers).includes(message.guild.id) && autoResponseServers[message.guild.id].enabled) {
                 const { responses } = autoResponseServers[message.guild.id];
                 for (const response of responses) {
-                    if (response.type === 'exact' && response.triggers.some(trigger => trigger === message.content.toLowerCase())) {
+                    if (response.type === 'exact' && response.triggers.some(trigger => trigger.toLowerCase() === message.content.toLowerCase())) {
                         await message.channel.send(response.response);
                         break;
-                    } else if (response.type === 'includes' && response.triggers.some(trigger => message.content.toLowerCase().includes(trigger))) {
+                    } else if (response.type === 'includes' && response.triggers.some(trigger => message.content.toLowerCase().includes(trigger.toLowerCase()))) {
                         await message.channel.send(response.response);
                         break;
-                    } else if (response.type === 'startsWith' && response.triggers.some(trigger => message.content.toLowerCase().startsWith(trigger))) {
+                    } else if (response.type === 'startsWith' && response.triggers.some(trigger => message.content.toLowerCase().startsWith(trigger.toLowerCase()))) {
                         await message.channel.send(response.response);
                         break;
-                    } else if (response.type === 'endsWith' && response.triggers.some(trigger => message.content.toLowerCase().endsWith(trigger))) {
+                    } else if (response.type === 'endsWith' && response.triggers.some(trigger => message.content.toLowerCase().endsWith(trigger.toLowerCase()))) {
                         await message.channel.send(response.response);
                         break;
                     }
@@ -222,19 +222,19 @@ module.exports = {
                         fs.writeFileSync('./data/secretAutoResponses.json', JSON.stringify(s, null, 4));
                         await message.reply("you discovered a new secret autoresponse! the trigger(s) was/were: `" + response.triggers.join("`, `") + "` (" + s.filter(r => r.discovered).length + '/' + secretResponses.length + " discovered)");
                     }, 500)
-                    if (response.type === 'exact' && response.triggers.some(trigger => trigger === message.content.toLowerCase())) {
+                    if (response.type === 'exact' && response.triggers.some(trigger => trigger.toLowerCase() === message.content.toLowerCase())) {
                         await message.channel.send(response.response);
                         if (!response.discovered) discover()
                         break;
-                    } else if (response.type === 'includes' && response.triggers.some(trigger => message.content.toLowerCase().includes(trigger))) {
+                    } else if (response.type === 'includes' && response.triggers.some(trigger => message.content.toLowerCase().includes(trigger.toLowerCase()))) {
                         await message.channel.send(response.response);
                         if (!response.discovered) discover()
                         break;
-                    } else if (response.type === 'startsWith' && response.triggers.some(trigger => message.content.toLowerCase().startsWith(trigger))) {
+                    } else if (response.type === 'startsWith' && response.triggers.some(trigger => message.content.toLowerCase().startsWith(trigger.toLowerCase()))) {
                         await message.channel.send(response.response);
                         if (!response.discovered) discover()
                         break;
-                    } else if (response.type === 'endsWith' && response.triggers.some(trigger => message.content.toLowerCase().endsWith(trigger))) {
+                    } else if (response.type === 'endsWith' && response.triggers.some(trigger => message.content.toLowerCase().endsWith(trigger.toLowerCase()))) {
                         await message.channel.send(response.response);
                         if (!response.discovered) discover()
                         break;
