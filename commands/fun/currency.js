@@ -26,6 +26,7 @@ module.exports = {
         if (from === to) return interaction.reply("You can't convert to the same currency!");
         if (from.length !== 3 || toArray.some(e => e.length !== 3)) return interaction.reply("Invalid currency code! Currency codes must be 3 characters long.");
         await interaction.deferReply();
+        if (toArray.length > 10) return interaction.editReply("You can only convert to up to 10 currencies at once.");
         let res = await fetch(`https://api.frankfurter.dev/v2/rates?base=${from}&quotes=${to}`)
         if (!res.ok) return interaction.editReply(`Error: ${res.statusText}`);
         res = await res.json();
