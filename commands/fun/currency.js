@@ -34,7 +34,7 @@ module.exports = {
             .setTitle(`Exchange rates from ${amount}${from}`)
             .setColor(0x2b2b2b)
             .setDescription(
-                res.map(e => `${e.quote}: ${e.rate.toFixed(2) * amount}`).join('\n')
+                res.map(e => `${e.quote}: ${e.rate * amount}`).join('\n')
         )
         interaction.editReply({ embeds: [embed] });
     }
