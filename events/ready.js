@@ -50,7 +50,8 @@ module.exports = {
                 try {
                     const data = await rest.put(
                         Routes.applicationGuildCommands(process.env.CLIENT_ID, guildId),
-                        { body: guildId === '1410959974842236930' ? dimiOnlyCommands.concat(commands) : commands },
+                        // { body: guildId === '1410959974842236930' ? dimiOnlyCommands.concat(commands) : commands },
+                        { body: guildId === '1410959974842236930' ? dimiOnlyCommands : [] },
                     );
                     console.log(`[Discord] Registered ${data.length} application (/) commands for server ${guild.name}`);
                 } catch (err) {
