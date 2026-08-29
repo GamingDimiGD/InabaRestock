@@ -29,7 +29,9 @@ module.exports = {
                 "ngrok-skip-browser-warning": "true"
             }
         })
-        await interaction.editReply('boiled ' + interaction.options.getUser('user'));
-        await interaction.channel.send({ files: [new AttachmentBuilder(res.body, { name: 'boil.mp4' })] });
+        await interaction.editReply({
+            content: `boiled <@${interaction.options.getUser('user').id}>!`,
+            files: [new AttachmentBuilder(res.body, { name: 'boil.mp4' })]
+        });
     }
 };
