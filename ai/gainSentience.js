@@ -156,7 +156,7 @@ let lastReplyTime = 0
 const reply = (input, learns = true) => {
     if (lastReplyTime &&
         Date.now() - lastReplyTime < (parseInt(JSON.parse(fs.readFileSync('./config.json', 'utf-8')).aiCoolDown) || 5e3)
-    ) return { response: `hold on i'm cooling down, please try again <t:${Math.floor(lastReplyTime / 1e3)}:R>`, metadata: { startInfo: { best: null, bestOnes: [], bestScore: 0 }, keyInfo: {} } }
+    ) return { response: `hold on i'm cooling down, please try again <t:${Math.floor((lastReplyTime + (parseInt(JSON.parse(fs.readFileSync('./config.json', 'utf-8')).aiCoolDown) || 5e3)) / 1e3)}:R>`, metadata: { startInfo: { best: null, bestOnes: [], bestScore: 0 }, keyInfo: {} } }
     const words = input.toLowerCase().split(/\s+/).filter(f => {
         let allowed = true;
         bannedWords.forEach(b => {
