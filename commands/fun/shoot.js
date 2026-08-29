@@ -4,7 +4,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName("shoot")
         .setDescription("Shoot someone")
-        .addMentionableOption(option =>
+        .addUserOption(option =>
             option.setName("user")
                 .setDescription("The user to shoot")
                 .setRequired(true)

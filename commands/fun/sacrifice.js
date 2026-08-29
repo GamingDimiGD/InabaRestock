@@ -4,7 +4,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName("sacrifice")
         .setDescription("Sacrifice a user to the inabakumori gods (this will @mention them)")
-        .addMentionableOption(option =>
+        .addUserOption(option =>
             option.setName("user")
                 .setDescription("The user to sacrifice")
                 .setRequired(true)

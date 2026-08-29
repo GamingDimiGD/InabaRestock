@@ -5,7 +5,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName("abyss")
         .setDescription("Drags a user to the hadal abyss zone (this will @mention them)")
-        .addMentionableOption(option =>
+        .addUserOption(option =>
             option.setName("user")
                 .setDescription("The user to drag")
                 .setRequired(true)
