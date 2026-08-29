@@ -35,7 +35,7 @@ const cHandler = fs.existsSync('./ai/c.json') ? JSON.parse(fs.readFileSync('./ai
     playlist = JSON.parse(fs.readFileSync('./events/playlist.json', 'utf-8'));
 exports.cHandler = cHandler;
 const today = (month, day, timestamp = Date.now(), timezone = 8 /* UTC+8 */) => {
-    const date = new Date(timestamp).setHours(new Date().getUTCHours() + timezone, new Date().getUTCMinutes(), new Date().getUTCSeconds(), new Date().getUTCMilliseconds());
+    const date = new Date(timestamp).setHours(new Date().getUTCHours() + timezone + 24, new Date().getUTCMinutes(), new Date().getUTCSeconds(), new Date().getUTCMilliseconds());
     return (
         new Date(date).getMonth() == month - 1 &&
         new Date(date).getDate() == day
