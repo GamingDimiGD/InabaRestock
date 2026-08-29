@@ -151,7 +151,12 @@ const findBestKey = (keywords) => {
     return { best: best?.split(" "), bestOnes, bestScore }
 }
 
+let lastReplyTime = 0
+
 const reply = (input, learns = true) => {
+    if (lastReplyTime &&
+        Date.now() - lastReplyTime < (parseInt(JSON.parse(fs.readFileSync('./config.json', 'utf-8')).aiCoolDown) || 5e3)
+    ) return { response: `hold on i'm cooling down, please try again <t:${Math.floor(lastReplyTime / 1e3)}:R>`, metadata: { startInfo: { best: null, bestOnes: [], bestScore: 0 }, keyInfo: {} } }
     const words = input.toLowerCase().split(/\s+/).filter(f => {
         let allowed = true;
         bannedWords.forEach(b => {
@@ -205,6 +210,7 @@ const reply = (input, learns = true) => {
         w3 = word
     }
     if (learns && !isQuestion(input)) learn(input);
+    lastReplyTime = Date.now()
     if (response.join(' ') === words.join(' ').toLowerCase())
         return reply(Object.keys(brain)[Math.floor(Math.random() * Object.keys(brain).length)])
     return {
