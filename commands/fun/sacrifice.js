@@ -12,11 +12,11 @@ module.exports = {
         .addBooleanOption(option =>
             option.setName('green')
                 .setDescription('Sacrifice to the greenabakumori gods?')
-                
-    )
+
+        )
     ,
     async execute(interaction) {
-        const user = interaction.options.getMentionable('user');
+        const user = interaction.options.getUser('user');
         const green = interaction.options.getBoolean('green');
         if (green) {
             await interaction.reply(`sacrificed ${user} to the greenabakumori gods`);

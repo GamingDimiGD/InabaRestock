@@ -12,7 +12,7 @@ module.exports = {
         )
     ,
     async execute(interaction) {
-        const user = interaction.options.getMentionable('user');
+        const user = interaction.options.getUser('user');
         await interaction.reply(`${user} has been dragged into the hadal abyss zone!`);
     }
 };

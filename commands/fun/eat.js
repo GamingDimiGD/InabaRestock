@@ -25,7 +25,7 @@ module.exports = {
         )
     ,
     async execute(interaction) {
-        const user = interaction.options.getMentionable('user');
+        const user = interaction.options.getUser('user');
         const tastiness = Math.floor(Math.random() * tastinessArray.length);
         await interaction.reply(`just ate ${user}, they taste ${tastinessArray[tastiness]}, ${tastiness}/${tastinessArray.length - 1}.`);
     }
