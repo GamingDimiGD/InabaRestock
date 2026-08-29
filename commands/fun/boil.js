@@ -16,8 +16,8 @@ module.exports = {
     async execute(interaction) {
         const { boilCD: commandCooldown, boilURL } = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
         if (!boilURL) return await interaction.reply('boil url is not set in `config.json`, pls tell dimi about this');
-        if (!interaction.options.getUser('user').user) return await interaction.reply('invite me to this server pls otherwise the command won\'t work for some reason');
-        let pfp = interaction.options.getUser('user').user.displayAvatarURL({ format: 'png' });
+        if (!interaction.options.getUser('user')) return await interaction.reply('invite me to this server pls otherwise the command won\'t work for some reason');
+        let pfp = interaction.options.getUser('user').displayAvatarURL({ format: 'png' });
         if (!pfp) return await interaction.reply('user not found!');
         if (pfp.endsWith('.webp')) pfp = pfp.replace('.webp', '.png');
         if (Date.now() - lastBoil < commandCooldown) return await interaction.reply('i need a break bro my cpu\'s getting fried, i\'ll be back <t:' + Math.floor((lastBoil + commandCooldown) / 1e3) + ':R>');
