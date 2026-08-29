@@ -34,11 +34,10 @@ const validURLStarters = [
 const cHandler = fs.existsSync('./ai/c.json') ? JSON.parse(fs.readFileSync('./ai/c.json', 'utf-8')) : {},
     playlist = JSON.parse(fs.readFileSync('./events/playlist.json', 'utf-8'));
 exports.cHandler = cHandler;
-const today = (month, day, timestamp = Date.now(), timezone = 8 /* UTC+8 */) => {
-    const date = new Date(timestamp).setHours(new Date().getUTCHours() + timezone + 24, new Date().getUTCMinutes(), new Date().getUTCSeconds(), new Date().getUTCMilliseconds());
+const today = (month, day, timestamp = Date.now(), timezone = "Asia/Taipei") => {
+    let [checkMonth, checkDay] = new Intl.DateTimeFormat("en-US", { timeZone: timezone }).format(new Date(timestamp)).split('/')
     return (
-        new Date(date).getMonth() == month - 1 &&
-        new Date(date).getDate() == day
+        month == checkMonth && day == checkDay
     )
 }
 
@@ -169,10 +168,10 @@ module.exports = {
         if (deadChatChannelID == message.channel.id && !message.mentions.has(message.client.user)
             && !checkProfanity(message.content).containsProfanity
         ) {
-            if (today(12, 4, message.createdTimestamp)) {
+            if (today(12, 4, message.createdTimestamp, "Asia/Tokyo")) {
                 message.react("🍎")
             }
-            if (today(9, 16, message.createdTimestamp, -3) && message.author.id == "1502008003870593108") {
+            if (today(9, 16, message.createdTimestamp, "America/Sao_Paulo") && message.author.id == "1502008003870593108") {
                 message.react("🍎")
                 message.react("1453721037324812289")
             }
