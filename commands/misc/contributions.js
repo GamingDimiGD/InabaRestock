@@ -15,12 +15,12 @@ module.exports = {
                 new EmbedBuilder()
                     .setTitle("Contributors")
                     .setDescription(
-                        await Promise.all(
+                        [...await Promise.all(
                             Object.keys(contributionList).map(async (id) => {
                                 const user = interaction.client.users.cache.get(id) || await interaction.client.users.fetch(id);
                                 return `${user.username}: ${contributionList[id]}`;
                             })
-                        )
+                        )].join('\n')
                     )
             ]
         })
