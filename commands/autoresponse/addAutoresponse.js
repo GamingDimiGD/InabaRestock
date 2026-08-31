@@ -24,7 +24,7 @@ module.exports = {
                     { name: 'includes', value: 'includes' },
                     { name: 'startsWith', value: 'startsWith' },
                     { name: 'endsWith', value: 'endsWith' },
-                    { name: 'regex (advanced matching, §0 means first match of the regex, §1 means second match etc.)', value: 'regex' }
+                    { name: 'regex (advanced matching, §0 means first match of the regex, §1 means second match etc. Only 1 trigger allowed.)', value: 'regex' }
                 )
         )
     ,
@@ -38,7 +38,7 @@ module.exports = {
         // if (interaction.guild.id !== '1410959974842236930') return await interaction.reply('Other servers aren\'t supported yet.');
         const type = interaction.options.getString('type');
         const message = interaction.options.getString('message');
-        const triggers = interaction.options.getString('triggers').split(',').map(s => s.trim());
+        const triggers = type === 'regex' ? [message] : interaction.options.getString('triggers').split(',').map(s => s.trim());
         const autoResponseServers = JSON.parse(fs.readFileSync('./data/autoResponseServers.json', 'utf8'));
         if (
             message.length > 500 ||
