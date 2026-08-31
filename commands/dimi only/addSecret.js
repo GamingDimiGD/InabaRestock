@@ -23,7 +23,8 @@ module.exports = {
                     { name: 'exact', value: 'exact' },
                     { name: 'includes', value: 'includes' },
                     { name: 'startsWith', value: 'startsWith' },
-                    { name: 'endsWith', value: 'endsWith' }
+                    { name: 'endsWith', value: 'endsWith' },
+                    { name: 'regex (advanced matching, §0 means first match of the regex, §1 means second match etc.)', value: 'regex' }
                 )
         )
     ,

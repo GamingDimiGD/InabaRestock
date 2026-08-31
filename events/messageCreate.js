@@ -194,6 +194,9 @@ module.exports = {
                     } else if (response.type === 'endsWith' && response.triggers.some(trigger => message.content.toLowerCase().endsWith(trigger.toLowerCase()))) {
                         await message.channel.send(response.response);
                         break;
+                    } else if (response.type === 'regex' && response.triggers.some(trigger => new RegExp(trigger).test(message.content))) {
+                        await message.channel.send(response.response.replaceAll(/§[0-9]+/g, (match) => message.content[match.slice(1) - 1]));
+                        break;
                     }
                 }
             }
@@ -235,6 +238,10 @@ module.exports = {
                         break;
                     } else if (response.type === 'endsWith' && response.triggers.some(trigger => message.content.toLowerCase().endsWith(trigger.toLowerCase()))) {
                         await message.channel.send(response.response);
+                        if (!response.discovered) discover()
+                        break;
+                    } else if (response.type === 'regex' && response.triggers.some(trigger => new RegExp(trigger).test(message.content))) {
+                        await message.channel.send(response.response.replaceAll(/§[0-9]+/g, (match) => message.content[match.slice(1) - 1]));
                         if (!response.discovered) discover()
                         break;
                     }
