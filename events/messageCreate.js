@@ -198,7 +198,7 @@ module.exports = {
                         await message.channel.send(response.response.replaceAll(/§[0-9]+/g, (match) => {
                             const index = parseInt(match.slice(1));
                             return message.content.match(new RegExp(...response.triggers[0].slice(1).split('/')))[index]; // assume only 1 trigger
-                        }));
+                        }).slice(0, 2000));
                         break;
                     }
                 }
@@ -247,7 +247,7 @@ module.exports = {
                         await message.channel.send(response.response.replaceAll(/§[0-9]+/g, (match) => {
                             const index = parseInt(match.slice(1));
                             return message.content.match(new RegExp(...response.triggers[0].slice(1).split('/')))[index]; // assume only 1 trigger
-                        }));
+                        }).slice(0, 2000));
                         if (!response.discovered) discover()
                         break;
                     }
