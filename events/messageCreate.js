@@ -195,7 +195,10 @@ module.exports = {
                         await message.channel.send(response.response);
                         break;
                     } else if (response.type === 'regex' && response.triggers.some(trigger => new RegExp(...trigger.slice(1).split('/')).test(message.content))) {
-                        await message.channel.send(response.response.replaceAll(/§[0-9]+/g, (match) => message.content[match.slice(1) - 1]));
+                        await message.channel.send(response.response.replaceAll(/§[0-9]+/g, (match) => {
+                            const index = parseInt(match.slice(1));
+                            return message.content.match(new RegExp(...trigger.slice(1).split('/')))[index];
+                        }));
                         break;
                     }
                 }
@@ -241,7 +244,10 @@ module.exports = {
                         if (!response.discovered) discover()
                         break;
                     } else if (response.type === 'regex' && response.triggers.some(trigger => new RegExp(...trigger.slice(1).split('/')).test(message.content))) {
-                        await message.channel.send(response.response.replaceAll(/§[0-9]+/g, (match) => message.content[match.slice(1) - 1]));
+                        await message.channel.send(response.response.replaceAll(/§[0-9]+/g, (match) => {
+                            const index = parseInt(match.slice(1));
+                            return message.content.match(new RegExp(...trigger.slice(1).split('/')))[index];
+                        }));
                         if (!response.discovered) discover()
                         break;
                     }
