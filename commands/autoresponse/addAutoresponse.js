@@ -24,7 +24,7 @@ module.exports = {
                     { name: 'includes', value: 'includes' },
                     { name: 'startsWith', value: 'startsWith' },
                     { name: 'endsWith', value: 'endsWith' },
-                    { name: 'regex (advanced matching, §0 means first match of the regex, §1 means second match etc. Only 1 trigger allowed.)', value: 'regex' }
+                    { name: 'regex', value: 'regex' }
                 )
         )
     ,
@@ -52,6 +52,6 @@ module.exports = {
         if (autoResponseServers[interaction.guild.id].responses.length > 100) return await interaction.reply('You have reached the maximum number of autoresponses.');
         autoResponseServers[interaction.guild.id].responses.push({ triggers, response: message, type });
         fs.writeFileSync('./data/autoResponseServers.json', JSON.stringify(autoResponseServers, null, 4));
-        await interaction.reply('Autoresponse added successfully!');
+        await interaction.reply('Autoresponse added successfully!' + (type === 'regex' ? `\n-# §0 means first match, §1 means second match etc. Only 1 trigger is allowed for regex autoresponses.` : ''));
     }
 };

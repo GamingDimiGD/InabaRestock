@@ -24,7 +24,7 @@ module.exports = {
                     { name: 'includes', value: 'includes' },
                     { name: 'startsWith', value: 'startsWith' },
                     { name: 'endsWith', value: 'endsWith' },
-                    { name: 'regex (advanced matching, §0 means first match of the regex, §1 means second match etc.)', value: 'regex' }
+                    { name: 'regex', value: 'regex' }
                 )
         )
     ,
@@ -35,6 +35,9 @@ module.exports = {
         const secretResponses = JSON.parse(fs.readFileSync('./data/secretAutoResponses.json', 'utf8'));
         secretResponses.push({ response: message, triggers, type, discovered: false });
         fs.writeFileSync('./data/secretAutoResponses.json', JSON.stringify(secretResponses, null, 4));
-        await interaction.reply({ content: 'Secret response added successfully!', flags: MessageFlags.Ephemeral });
+        await interaction.reply({
+            content: 'Autoresponse added successfully!' + (type === 'regex' ? `\n-# §0 means first match, §1 means second match etc. Only 1 trigger is allowed for regex autoresponses.` : ''),
+            flags: MessageFlags.Ephemeral
+        });
     }
 };
