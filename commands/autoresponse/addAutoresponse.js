@@ -38,7 +38,7 @@ module.exports = {
         // if (interaction.guild.id !== '1410959974842236930') return await interaction.reply('Other servers aren\'t supported yet.');
         const type = interaction.options.getString('type');
         const message = interaction.options.getString('message');
-        const triggers = type === 'regex' ? [message] : interaction.options.getString('triggers').split(',').map(s => s.trim());
+        const triggers = type === 'regex' ? [interaction.options.getString('triggers')] : interaction.options.getString('triggers').split(',').map(s => s.trim());
         const autoResponseServers = JSON.parse(fs.readFileSync('./data/autoResponseServers.json', 'utf8'));
         if (
             message.length > 500 ||

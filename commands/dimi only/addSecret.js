@@ -31,7 +31,7 @@ module.exports = {
     async execute(interaction) {
         const type = interaction.options.getString('type');
         const message = interaction.options.getString('message').replaceAll('\\n', '\n');
-        const triggers = interaction.options.getString('triggers').split(',').map(s => s.trim());
+        const triggers = type === 'regex' ? [interaction.options.getString('triggers')] : interaction.options.getString('triggers').split(',').map(s => s.trim());
         const secretResponses = JSON.parse(fs.readFileSync('./data/secretAutoResponses.json', 'utf8'));
         secretResponses.push({ response: message, triggers, type, discovered: false });
         fs.writeFileSync('./data/secretAutoResponses.json', JSON.stringify(secretResponses, null, 4));
