@@ -29,6 +29,10 @@ module.exports = {
                 "ngrok-skip-browser-warning": "true"
             }
         })
+        if (!res.ok) { 
+            console.log('[boil] Error: ' + res.statusText);
+            return await interaction.editReply(`Error: \`\`\`${res.statusText}\`\`\``);
+        }
         await interaction.editReply({
             content: `boiled <@${interaction.options.getUser('user').id}>!`,
             files: [new AttachmentBuilder(res.body, { name: 'boil.mp4' })]
