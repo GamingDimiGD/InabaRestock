@@ -86,6 +86,14 @@ module.exports = {
 						await interaction.reply('error lol');
 					});
 				}
+			} else if (interaction.isAutocomplete()) { 
+				const command = interaction.client.commands.get(interaction.commandName) || interaction.client.dimiOnlyCommands.get(interaction.commandName);
+				if (!command) return;
+				try {
+					await command.autocomplete(interaction);
+				} catch (error) {
+					console.error(error);
+				}
 			}
 			if (!interaction.isChatInputCommand()) return;
 
