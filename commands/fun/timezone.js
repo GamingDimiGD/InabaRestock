@@ -20,6 +20,6 @@ module.exports = {
         );
     },
     async execute(interaction) {
-        await interaction.reply(Intl.DateTimeFormat('en-US', { timeZone: tz, dateStyle: 'full', timeStyle: 'long' }).format(new Date()));
+        await interaction.reply(Intl.DateTimeFormat('en-US', { timeZone: interaction.options.getString('tz'), dateStyle: 'full', timeStyle: 'long' }).format(new Date()));
     }
 };
