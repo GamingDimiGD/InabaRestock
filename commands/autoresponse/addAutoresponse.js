@@ -27,6 +27,10 @@ module.exports = {
                     { name: 'regex', value: 'regex' }
                 )
         )
+        .addStringOption(option => 
+            option.setName('sticker_id')
+                .setDescription('The ID of the sticker to send (Use inspect element)')
+        )
     ,
     async execute(interaction) {
         if (!interaction.guild) {
@@ -50,7 +54,16 @@ module.exports = {
         }
         if (!autoResponseServers[interaction.guild.id]) autoResponseServers[interaction.guild.id] = { enabled: true, responses: [] };
         if (autoResponseServers[interaction.guild.id].responses.length > 100) return await interaction.reply('You have reached the maximum number of autoresponses.');
-        autoResponseServers[interaction.guild.id].responses.push({ triggers, response: message, type });
+        const stickerID = interaction.options.getString('sticker_id')
+        if (stickerID) {
+            if (isNaN(parseInt(stickerID))) return await interaction.reply('Invalid sticker ID.\n-# To get the sticker ID, use inspect element, go to the arrow and the square icon in the top left corner of the inspect element window and click the sticker, then go to the top part of the window and you\'ll see something that starts with `<img`. Inside it there\'ll be a `src` property with a link inside, the long number is the sticker ID.');
+            const sticker = interaction.guild.stickers.cache.get(stickerID) || await interaction.guild.stickers.fetch(stickerID);
+            if (!sticker) return await interaction.reply('Invalid sticker ID.\n-# To get the sticker ID, use inspect element, go to the arrow and the square icon in the top left corner of the inspect element window and click the sticker, then go to the top part of the window and you\'ll see something that starts with `<img`. Inside it there\'ll be a `src` property with a link inside, the long number is the sticker ID.');
+        }
+        autoResponseServers[interaction.guild.id].responses.push(
+            stickerID ? { triggers, response: message, type, stickerID } :
+            { triggers, response: message, type }
+        );
         fs.writeFileSync('./data/autoResponseServers.json', JSON.stringify(autoResponseServers, null, 4));
         await interaction.reply('Autoresponse added successfully!' + (type === 'regex' ? `\n-# §0 means first match, §1 means second match etc. Only 1 trigger is allowed for regex autoresponses.` : ''));
     }

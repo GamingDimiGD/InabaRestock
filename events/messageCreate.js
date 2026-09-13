@@ -183,16 +183,28 @@ module.exports = {
                 const { responses } = autoResponseServers[message.guild.id];
                 for (const response of responses) {
                     if (response.type === 'exact' && response.triggers.some(trigger => trigger.toLowerCase() === message.content.toLowerCase())) {
-                        await message.channel.send(response.response);
+                        await message.channel.send({
+                            content: response.response,
+                            stickers: response.stickerID ? [response.stickerID] : null,
+                        }).catch(err => console.error(err));
                         break;
                     } else if (response.type === 'includes' && response.triggers.some(trigger => message.content.toLowerCase().includes(trigger.toLowerCase()))) {
-                        await message.channel.send(response.response);
+                        await message.channel.send({
+                            content: response.response,
+                            stickers: response.stickerID ? [response.stickerID] : null,
+                        }).catch(err => console.error(err));
                         break;
                     } else if (response.type === 'startsWith' && response.triggers.some(trigger => message.content.toLowerCase().startsWith(trigger.toLowerCase()))) {
-                        await message.channel.send(response.response);
+                        await message.channel.send({
+                            content: response.response,
+                            stickers: response.stickerID ? [response.stickerID] : null,
+                        }).catch(err => console.error(err));
                         break;
                     } else if (response.type === 'endsWith' && response.triggers.some(trigger => message.content.toLowerCase().endsWith(trigger.toLowerCase()))) {
-                        await message.channel.send(response.response);
+                        await message.channel.send({
+                            content: response.response,
+                            stickers: response.stickerID ? [response.stickerID] : null,
+                        }).catch(err => console.error(err));
                         break;
                     } else if (response.type === 'regex' && response.triggers.some(trigger => new RegExp(...trigger.slice(1).split('/')).test(message.content))) {
                         await message.channel.send(response.response.replaceAll(/§[0-9]+/g, (match) => {
