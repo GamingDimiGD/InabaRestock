@@ -4,7 +4,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require("discord.js"),
 
 const findBestMatch = (search, songs) => {
     if (!search) return -1;
-    const similarities = songs.map(song => Math.max(stringSimilarity(search, song?.searchName || '', 1), stringSimilarity(search, song.title, 1)));
+    const similarities = songs.map(song =>  stringSimilarity(search, song.title, Math.min(3, search.length)));
     return similarities.indexOf(Math.max(...similarities));
 }
 
@@ -22,8 +22,16 @@ module.exports = {
             option.setName("search")
                 .setDescription("Search for specific song by name")
                 .setRequired(false)
+                .setAutocomplete(true)
         )
     ,
+    async autocomplete(interaction) {
+        const focusedValue = interaction.options.getFocused();
+        const songs = JSON.parse(fs.readFileSync("./songs.json", "utf-8"));
+        if (!focusedValue) return await interaction.respond(songs.slice(0, 25).map(song => ({ name: `${songs.indexOf(song) + 1} - ${song.title}`, value: song.title })));
+        const filtered = [...songs].sort((a, b) => stringSimilarity(focusedValue, b.title, Math.min(3, focusedValue.length)) - stringSimilarity(focusedValue, a.title, Math.min(3, focusedValue.length))).slice(0, 25).filter(song => stringSimilarity(focusedValue, song.title, Math.min(3, focusedValue.length)) > 0).map(song => ({ name: `${songs.indexOf(song) + 1} - ${song.title}`, value: song.title }));
+        await interaction.respond(filtered);
+    },
     async execute(interaction) {
         await interaction.deferReply();
         const songs = JSON.parse(fs.readFileSync("./songs.json", "utf-8"));

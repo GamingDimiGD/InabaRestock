@@ -5,7 +5,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js'),
 
 const findBestMatch = (search, imageDataList) => {
     if (!search) return -1;
-    const similarities = imageDataList.map(imageData => Math.max(stringSimilarity(search, imageData?.searchName || '', 1), stringSimilarity(search, imageData.name, 1)));
+    const similarities = imageDataList.map(imageData => Math.max(stringSimilarity(search, imageData?.searchName || '', Math.min(3, search.length)), stringSimilarity(search, imageData.name, Math.min(3, search.length))));
     return similarities.indexOf(Math.max(...similarities));
 }
 
@@ -17,6 +17,7 @@ module.exports = {
             option.setName('search')
                 .setDescription('search for specific osagery by name')
                 .setRequired(false)
+                .setAutocomplete(true)
         )
         .addIntegerOption(option =>
             option.setName('number')
@@ -24,6 +25,22 @@ module.exports = {
                 .setRequired(false)
         )
     ,
+    async autocomplete(interaction) { 
+        const focusedValue = interaction.options.getFocused();
+        const imageDataList = await fetch(URL + "data.json?t=" + Date.now(), {
+            cache: "no-store"
+        }).then(res => res.text()).then(text => JSON.parse(text)).catch(() => []);
+        if (!focusedValue) return await interaction.respond(imageDataList.slice(0, 25).map(imageData => ({ name: imageData.searchName || imageData.name, value: imageData.name })));
+        await interaction.respond(
+            imageDataList
+                .sort((a, b) =>
+                    Math.max(stringSimilarity(focusedValue, b.searchName || '', Math.min(3, focusedValue.length)), stringSimilarity(focusedValue, b.name, Math.min(3, focusedValue.length))) - Math.max(stringSimilarity(focusedValue, a.searchName || '', Math.min(3, focusedValue.length)), stringSimilarity(focusedValue, a.name, Math.min(3, focusedValue.length)))
+                )
+                .slice(0, 25)
+                .filter(imageData => stringSimilarity(focusedValue, imageData.searchName || '', Math.min(3, focusedValue.length)) > 0 || stringSimilarity(focusedValue, imageData.name, Math.min(3, focusedValue.length)) > 0)
+                .map(imageData => ({ name: imageData.searchName || imageData.name, value: imageData.name }))
+        )
+    },
     async execute(interaction) {
         await interaction.deferReply();
         const imageDataList = await fetch(URL + "data.json?t=" + Date.now(), {

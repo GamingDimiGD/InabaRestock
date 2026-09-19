@@ -1,4 +1,9 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js"),
+    listCache = fetch('https://api.frankfurter.dev/v2/currencies?scope=all').then(res => res.json()).then(res => res.map(e => ({
+        name: `${e.name} (${e.iso_code})`,
+        value: e.iso_code
+    }))),
+    { stringSimilarity } = require('string-similarity-js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -13,12 +18,19 @@ module.exports = {
             option.setName('from')
                 .setDescription('The currency to convert from')
                 .setRequired(true)
+                .setAutocomplete(true)
         )
         .addStringOption(option =>
             option.setName('to')
                 .setDescription('The currency or currencies to convert to (split with comma if multiple)')
                 .setRequired(true)
-        ),
+                .setAutocomplete(true)
+    ),
+    async autocomplete(interaction) {
+        const focusedValue = interaction.options.getFocused();
+        const filtered = [...(await listCache)].sort((a, b) => stringSimilarity(focusedValue, b.name, Math.min(3, focusedValue.length)) - stringSimilarity(focusedValue, a.name, Math.min(3, focusedValue.length))).slice(0, 25).filter(currency => stringSimilarity(focusedValue, currency.name, Math.min(3, focusedValue.length)) > 0);
+        await interaction.respond(filtered);
+    },
     async execute(interaction) {
         const amount = interaction.options.getNumber('amount'),
             from = interaction.options.getString('from').toUpperCase(), to = interaction.options.getString('to').toUpperCase(),

@@ -69,7 +69,7 @@ module.exports = {
 						.setTitle('Autoresponses for this server')
 						.setColor('#b2b2b2')
 						.setDescription(pages[page - 1])
-						.setFooter({ text: `Page 1 of ${pages.length} | ${responses.length} autoresponses` });
+						.setFooter({ text: `Page ${page} of ${pages.length} | ${responses.length} autoresponses` });
 
 					const row = new ActionRowBuilder()
 						.addComponents(
