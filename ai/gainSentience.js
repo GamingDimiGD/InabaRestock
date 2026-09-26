@@ -54,7 +54,8 @@ let cHandler = fs.existsSync('./ai/c.json') ? JSON.parse(fs.readFileSync('./ai/c
         "should", "shall",
         "have", "has", "had"],
     nonQuestionAux = ["not"],
-    bannedWords = ["<@1410941750641561730>", "@here", "@everyone", "?debug"];
+    bannedWords = ["<@1410941750641561730>", "@here", "@everyone", "?debug"],
+    keycount = Object.keys(brain).length + Object.keys(smallBrain).length + Object.keys(tinyBrain).length;
 
 const isQuestion = (text) => {
     const words = text.toLowerCase().split(/\s+/)
@@ -122,6 +123,8 @@ const save = () => {
     fs.writeFileSync('./ai/smallBrain.json', JSON.stringify(smallBrain))
     fs.writeFileSync('./ai/tinyBrain.json', JSON.stringify(tinyBrain))
     fs.writeFileSync('./ai/starterBrain.json', JSON.stringify(starterBrain));
+    keycount = Object.keys(brain).length + Object.keys(smallBrain).length + Object.keys(tinyBrain).length
+    module.exports.keycount = keycount
     console.log('[AI] Autosaved!')
     changesMade = false
     setTimeout(save, parseInt(JSON.parse(fs.readFileSync('./config.json', 'utf-8')).brainSaveInterval) * 1e3)
@@ -247,4 +250,4 @@ const gainSentience = async (channel, messageWordLength = Math.floor(Math.random
     }
 }
 
-module.exports = { gainSentience, reply, learn, scrapeChat };
+module.exports = { gainSentience, reply, learn, scrapeChat, keycount };

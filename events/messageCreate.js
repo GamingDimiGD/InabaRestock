@@ -239,24 +239,25 @@ module.exports = {
                         fs.writeFileSync('./data/secretAutoResponses.json', JSON.stringify(s, null, 4));
                         await message.reply("you discovered a new secret autoresponse! the trigger(s) was/were: `" + response.triggers.join("`, `") + "` (" + s.filter(r => r.discovered).length + '/' + secretResponses.length + " discovered)");
                     }, 500)
+                    let responseMessage = response.response.replaceAll('{keycount}', require('../ai/gainSentience.js').keycount)
                     if (response.type === 'exact' && response.triggers.some(trigger => trigger.toLowerCase() === message.content.toLowerCase())) {
-                        await message.channel.send(response.response);
+                        await message.channel.send(responseMessage);
                         if (!response.discovered) discover()
                         break;
                     } else if (response.type === 'includes' && response.triggers.some(trigger => message.content.toLowerCase().includes(trigger.toLowerCase()))) {
-                        await message.channel.send(response.response);
+                        await message.channel.send(responseMessage);
                         if (!response.discovered) discover()
                         break;
                     } else if (response.type === 'startsWith' && response.triggers.some(trigger => message.content.toLowerCase().startsWith(trigger.toLowerCase()))) {
-                        await message.channel.send(response.response);
+                        await message.channel.send(responseMessage);
                         if (!response.discovered) discover()
                         break;
                     } else if (response.type === 'endsWith' && response.triggers.some(trigger => message.content.toLowerCase().endsWith(trigger.toLowerCase()))) {
-                        await message.channel.send(response.response);
+                        await message.channel.send(responseMessage);
                         if (!response.discovered) discover()
                         break;
                     } else if (response.type === 'regex' && response.triggers.some(trigger => new RegExp(...trigger.slice(1).split('/')).test(message.content))) {
-                        await message.channel.send(response.response.replaceAll(/§[0-9]+/g, (match) => {
+                        await message.channel.send(responseMessage.replaceAll(/§[0-9]+/g, (match) => {
                             const index = parseInt(match.slice(1));
                             return message.content.match(new RegExp(...response.triggers[0].slice(1).split('/')))[index]; // assume only 1 trigger
                         }).slice(0, 2000));
