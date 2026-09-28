@@ -1,37 +1,32 @@
-const { SlashCommandBuilder } = require('discord.js'),
+const { SlashCommandSubcommandBuilder } = require('discord.js'),
     fs = require('fs')
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('add-autoresponse')
-        .setDescription('Add an autoresponse')
+    data: new SlashCommandSubcommandBuilder()
+        .setName("add")
+        .setDescription("Add an autoresponse")
         .addStringOption(option =>
-            option.setName('triggers')
-                .setDescription('The trigger(s) to add, separated by commas')
+            option.setName("triggers")
+                .setDescription("The trigger(s) to add, separated by commas")
                 .setRequired(true)
         )
         .addStringOption(option =>
-            option.setName('message')
-                .setDescription('The message to add')
+            option.setName("message")
+                .setDescription("The message to add")
                 .setRequired(true)
         )
         .addStringOption(option =>
-            option.setName('type')
-                .setDescription('The type of trigger')
+            option.setName("type")
+                .setDescription("The type of trigger")
                 .setRequired(true)
                 .addChoices(
-                    { name: 'exact', value: 'exact' },
-                    { name: 'includes', value: 'includes' },
-                    { name: 'startsWith', value: 'startsWith' },
-                    { name: 'endsWith', value: 'endsWith' },
-                    { name: 'regex', value: 'regex' }
+                    { name: "exact", value: "exact" },
+                    { name: "includes", value: "includes" },
+                    { name: "startsWith", value: "startsWith" },
+                    { name: "endsWith", value: "endsWith" },
+                    { name: "regex", value: "regex" }
                 )
-        )
-        .addStringOption(option => 
-            option.setName('sticker_id')
-                .setDescription('The ID of the sticker to send (Use inspect element)')
-        )
-    ,
+        ),
     async execute(interaction) {
         if (!interaction.guild) {
             return await interaction.reply('This command can only be used in a server.');
@@ -62,7 +57,7 @@ module.exports = {
         }
         autoResponseServers[interaction.guild.id].responses.push(
             stickerID ? { triggers, response: message, type, stickerID } :
-            { triggers, response: message, type }
+                { triggers, response: message, type }
         );
         fs.writeFileSync('./data/autoResponseServers.json', JSON.stringify(autoResponseServers, null, 4));
         await interaction.reply('Autoresponse added successfully!' + (type === 'regex' ? `\n-# §0 means first match, §1 means second match etc. Only 1 trigger is allowed for regex autoresponses.` : ''));

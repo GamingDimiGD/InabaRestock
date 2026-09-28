@@ -1,10 +1,10 @@
-const { SlashCommandBuilder } = require('discord.js'),
+const { SlashCommandSubcommandBuilder } = require('discord.js'),
     fs = require('fs')
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('toggle-autoresponse')
-        .setDescription('Toggle autoresponse for this server'),
+    data: new SlashCommandSubcommandBuilder()
+        .setName("toggle")
+        .setDescription("Toggle autoresponse for this server"),
     async execute(interaction) {
         if (!interaction.guild) {
             return await interaction.reply('This command can only be used in a server.');

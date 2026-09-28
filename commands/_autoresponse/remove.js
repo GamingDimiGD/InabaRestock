@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js'),
+const { SlashCommandSubcommandBuilder } = require('discord.js'),
     fs = require('fs'), { stringSimilarity } = require('string-similarity-js');
 
 const findBestMatch = (search, triggers) => {
@@ -8,16 +8,15 @@ const findBestMatch = (search, triggers) => {
 }
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('remove-autoresponse')
-        .setDescription('Remove an autoresponse')
+    data: new SlashCommandSubcommandBuilder()
+        .setName("remove")
+        .setDescription("Remove an autoresponse")
         .addStringOption(option =>
-            option.setName('trigger')
-                .setDescription('The trigger to remove')
+            option.setName("trigger")
+                .setDescription("The trigger to remove")
                 .setRequired(true)
                 .setAutocomplete(true)
-        )
-    ,
+        ),
     async autocomplete(interaction) {
         const focusedValue = interaction.options.getFocused();
         const autoResponseServers = JSON.parse(fs.readFileSync('./data/autoResponseServers.json', 'utf8'));

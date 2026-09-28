@@ -1,7 +1,7 @@
 const cheerio = require("cheerio");
 const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
 require('dotenv').config({ quiet: true });
-    fs = require('fs'),
+fs = require('fs'),
     path = require('path');
 module.exports.checkDuration = 1.5 * 36e5
 const itemData = fs.existsSync(path.join(__dirname, 'cache', 'checkData.json')) ? JSON.parse(fs.readFileSync(path.join(__dirname, 'cache', 'checkData.json'), "utf-8") || '{}') : { allItemsCache: [], lastCheck: 0 };
@@ -68,11 +68,31 @@ const client = new Client({
 module.exports.client = client
 client.commands = new Collection();
 client.dimiOnlyCommands = new Collection();
+const { SlashCommandBuilder } = require('discord.js');
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
 const commands = [], dimiOnlyCommands = [];
 
 for (const folder of commandFolders) {
+    if (folder.startsWith("_")) {
+        const command = {
+            data: new SlashCommandBuilder()
+                .setName(folder.replace("_", ""))
+                .setDescription(folder.replace("_", "") + " commands")
+        }
+        for (const file of fs.readdirSync(path.join(foldersPath, folder)).filter(file => file.endsWith('.js'))) {
+            command.data.options.push(require(path.join(foldersPath, folder, file)).data);
+            command.execute = async (interaction) => {
+                fs.readdirSync("./commands/" + folder).forEach(file => {
+                    if (!file.endsWith(".js") || !file.startsWith(interaction.options.getSubcommand())) return;
+                    require("./commands/" + folder + "/" + file).execute(interaction);
+                })
+            }
+        }
+        commands.push(command.data.toJSON());
+        client.commands.set(folder.replace("_", ""), command);
+        continue;
+    }
     const commandsPath = path.join(foldersPath, folder);
     const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
     for (const file of commandFiles) {

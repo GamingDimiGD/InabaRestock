@@ -1,10 +1,10 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js'),
+const { SlashCommandSubcommandBuilder, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js'),
     fs = require('fs')
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('list-autoresponse')
-        .setDescription('List all autoresponses for this server'),
+    data: new SlashCommandSubcommandBuilder()
+        .setName("list")
+        .setDescription("List all autoresponses for this server"),
     async execute(interaction) {
         if (!interaction.guild) {
             return await interaction.reply('This command can only be used in a server.');

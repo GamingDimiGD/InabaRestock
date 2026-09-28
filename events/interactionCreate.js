@@ -90,6 +90,9 @@ module.exports = {
 				const command = interaction.client.commands.get(interaction.commandName) || interaction.client.dimiOnlyCommands.get(interaction.commandName);
 				if (!command) return;
 				try {
+					if (interaction.options.getSubcommand) {
+						return require(`../commands/_${interaction.commandName}/${interaction.options.getSubcommand()}.js`).autocomplete(interaction);
+					}
 					await command.autocomplete(interaction);
 				} catch (error) {
 					console.error(error);
