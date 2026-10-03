@@ -117,6 +117,10 @@ module.exports = {
 				};
 				await command.execute(interaction);
 			} catch (error) {
+				if (error.code === 10062) {
+					console.log("[Discord] Interaction expired or already acknowledged.");
+					return;
+				}
 				console.error(error);
 				if (interaction.replied || interaction.deferred) {
 					interaction.channel.send('```' + error + '```')

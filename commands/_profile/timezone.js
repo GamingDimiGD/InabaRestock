@@ -17,9 +17,7 @@ module.exports = {
         const timezones = Intl.supportedValuesOf('timeZone');
         if (!focusedValue) return await interaction.respond(timezones.slice(0, 25).map(tz => ({ name: tz, value: tz })));
         const filtered = [...timezones].sort((a, b) => stringSimilarity(focusedValue, b, Math.min(3, focusedValue.length)) - stringSimilarity(focusedValue, a, Math.min(3, focusedValue.length))).slice(0, 25).filter(tz => stringSimilarity(focusedValue, tz, Math.min(3, focusedValue.length)) > 0).map(tz => ({ name: tz, value: tz }));
-        await interaction.respond(
-            filtered.slice(0, 25).map(tz => ({ name: tz, value: tz }))
-        );
+        await interaction.respond(filtered);
     },
     async execute(interaction) {
         await interaction.deferReply();
