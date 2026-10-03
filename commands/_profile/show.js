@@ -22,7 +22,7 @@ module.exports = {
         if (!userData) return interaction.editReply(user.username + " doesn't have a profile yet!");
         const embed = new EmbedBuilder()
             .setTitle(`**${user.username}**'s profile`)
-            .setColor(0xb2b2b2)
+            .setColor(userData.color || 0xb2b2b2)
             .setThumbnail(user.displayAvatarURL({ format: "png" }))
             .setDescription(Object.keys(jsonToEnglish).map(k => `${jsonToEnglish[k]}: ${userData[k] || "N/A"}`).join('\n'));
         interaction.editReply({ embeds: [embed] });
