@@ -5,7 +5,7 @@ const { SlashCommandSubcommandBuilder } = require('discord.js'),
 module.exports = {
     data: new SlashCommandSubcommandBuilder()
         .setName("favsong")
-        .setDescription("Set your favorite song (globally)")
+        .setDescription("Set your favorite Inabakumori song (globally)")
         .addStringOption(option =>
             option.setName("song")
                 .setDescription("The song to set")

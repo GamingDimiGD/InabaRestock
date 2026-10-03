@@ -1,7 +1,9 @@
 const { SlashCommandSubcommandBuilder, EmbedBuilder } = require("discord.js");
 
 const jsonToEnglish = {
-    "favSong": "Favorite song"
+    "favSong": "Favorite Inabakumori song",
+    "timezone": "Timezone",
+    "color": "Color"
 }
 
 module.exports = {
@@ -22,7 +24,7 @@ module.exports = {
             .setTitle(`**${user.username}**'s profile`)
             .setColor(0xb2b2b2)
             .setThumbnail(user.displayAvatarURL({ format: "png" }))
-            .setDescription(Object.keys(userData).map(k => `${jsonToEnglish[k] || k}: **${userData[k]}**`).join('\n'));
+            .setDescription(Object.keys(jsonToEnglish).map(k => `${jsonToEnglish[k]}: ${userData[k] || "N/A"}`).join('\n'));
         interaction.editReply({ embeds: [embed] });
     }
 }
