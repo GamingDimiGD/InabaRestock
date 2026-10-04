@@ -220,15 +220,18 @@ module.exports = {
                 const prefix = '!'
                 if (message.content.startsWith(prefix)) {
                     let command = message.content.split(/\s+/)[0].toLowerCase().slice(1);
-                    // let args = message.content.split(/\s+/).splice(1);
+                    let args = message.content.split(/\s+/).splice(1);
                     if (command === 'list-secrets' || command === 'ls' || command === 'secrets') {
                         let secretResponses = JSON.parse(fs.readFileSync('./data/secretAutoResponses.json', 'utf-8'));
+                        let page = args[0] ? parseInt(args[0]) : 1;
+                        if (isNaN(page) || page < 1 || page > Math.ceil(secretResponses.length / pageLength)) return message.reply(`invalid page number, must be between 1 and ${Math.ceil(secretResponses.length / pageLength)}`);
+                        secretResponses = secretResponses.slice((page - 1) * pageLength, page * pageLength);
                         const embed = new EmbedBuilder()
                             .setTitle("Secret Autoresponses")
                             .setColor("#b2b2b2")
-                            .setDescription(secretResponses.filter(r => r.discovered).map(r => '`' + r.triggers.join("`, `") + '`').join("\n"))
-                            .setFooter({ text: `Listing ${secretResponses.filter(r => r.discovered).length} of ${secretResponses.length} secret autoresponses` })
-                        await message.reply({ embeds: [embed] });
+                            .setDescription(secretResponses.filter(r => r.discovered).map((r, i) => `**${i + 1 + (page - 1) * pageLength}.**` + '`' + r.triggers.join("`, `") + '`').join("\n"))
+                            .setFooter({ text: `Listing ${secretResponses.filter(r => r.discovered).length} of ${secretResponses.length} secret autoresponses. Page ${page}/${Math.ceil(secretResponses.length / pageLength)}` })
+                        await message.reply({ content: "listing secret autoresponses, use `!ls <page>` for different pages (e.g. `!ls 2`)", embeds: [embed] });
                     }
                 }
 
