@@ -48,7 +48,7 @@ module.exports = {
             return await interaction.reply('Invalid trigger(s) or response, responses should be less than 500 characters, triggers should be less than 50 characters and less than 5 triggers.');
         }
         if (!autoResponseServers[interaction.guild.id]) autoResponseServers[interaction.guild.id] = { enabled: true, responses: [] };
-        if (autoResponseServers[interaction.guild.id].responses.length > 100) return await interaction.reply('You have reached the maximum number of autoresponses.');
+        if (autoResponseServers[interaction.guild.id].responses.length > 100 && interaction.guild.id !== '1410959974842236930') return await interaction.reply('You have reached the maximum number of autoresponses.');
         const stickerID = interaction.options.getString('sticker_id')
         if (stickerID) {
             if (isNaN(parseInt(stickerID))) return await interaction.reply('Invalid sticker ID.\n-# To get the sticker ID, use inspect element, go to the arrow and the square icon in the top left corner of the inspect element window and click the sticker, then go to the top part of the window and you\'ll see something that starts with `<img`. Inside it there\'ll be a `src` property with a link inside, the long number is the sticker ID.');
