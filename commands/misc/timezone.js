@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require("discord.js"), { stringSimilarity } = require('string-similarity-js');
+const { SlashCommandBuilder } = require("discord.js"), { stringSimilarity } = require('string-similarity-js'), fs = require('fs');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -7,8 +7,13 @@ module.exports = {
         .addStringOption(option =>
             option.setName("tz")
                 .setDescription("The timezone code thingy")
-                .setRequired(true)
+                .setRequired(false)
                 .setAutocomplete(true)
+    )
+        .addUserOption(option =>
+            option.setName("user")
+                .setDescription("The user to get the timezone of")
+                .setRequired(false)
         )
     ,
     async autocomplete(interaction) {
@@ -19,6 +24,10 @@ module.exports = {
         await interaction.respond(filtered);
     },
     async execute(interaction) {
+        const user = interaction.options.getUser("user"), { timezone } = user ? JSON.parse(fs.readFileSync(`./data/users.json`, "utf-8"))[user.id] || {} : {};
+
+        if (timezone) return await interaction.reply(Intl.DateTimeFormat('en-US', { timeZone: timezone, dateStyle: 'full', timeStyle: 'long' }).format(new Date()));
+
         if (!Intl.supportedValuesOf('timeZone').includes(interaction.options.getString('tz'))) return await interaction.reply("Invalid timezone");
         await interaction.reply(Intl.DateTimeFormat('en-US', { timeZone: interaction.options.getString('tz'), dateStyle: 'full', timeStyle: 'long' }).format(new Date()));
     }
