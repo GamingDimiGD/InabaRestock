@@ -32,10 +32,10 @@ module.exports = {
         let autoResponseServers = JSON.parse(fs.readFileSync('./data/autoResponseServers.json', 'utf8'));
         const saidTrigger = autoResponseServers[interaction.guild.id].responses.find(response => response.triggers.includes(trigger));
         if (!saidTrigger) return await interaction.reply('No autoresponse found with that trigger.');
-        const userData = JSON.parse(fs.readFileSync(`./data/users.json`, "utf-8"));
-        const { disabledAutoResponses } = userData[interaction.user.id] ? userData[interaction.user.id] : userData[interaction.user.id] = {};
+        let userData = JSON.parse(fs.readFileSync(`./data/users.json`, "utf-8"));
+        let { disabledAutoResponses } = userData[interaction.user.id] ? userData[interaction.user.id] : userData[interaction.user.id] = {};
         if (!disabledAutoResponses) return await interaction.reply('You have not disabled any autoresponses.');
-        const serverDisabledAutoResponses = disabledAutoResponses[interaction.guild.id] ? disabledAutoResponses[interaction.guild.id] : userData[interaction.user.id].disabledAutoResponses[interaction.guild.id] = disabledAutoResponses[interaction.guild.id] = [];
+        let serverDisabledAutoResponses = disabledAutoResponses[interaction.guild.id] ? disabledAutoResponses[interaction.guild.id] : userData[interaction.user.id].disabledAutoResponses[interaction.guild.id] = disabledAutoResponses[interaction.guild.id] = [];
         if (!serverDisabledAutoResponses.includes(trigger)) return await interaction.reply('You did not disable that autoresponse.');
         userData[interaction.user.id].disabledAutoResponses[interaction.guild.id].filter(response => response !== trigger);
         fs.writeFileSync(`./data/users.json`, JSON.stringify(userData));
