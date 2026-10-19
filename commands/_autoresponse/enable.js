@@ -20,7 +20,7 @@ module.exports = {
     async autocomplete(interaction) {
         const focusedValue = interaction.options.getFocused();
         const { disabledAutoResponses: autoResponseServers } = JSON.parse(fs.readFileSync('./data/users.json', 'utf8'))[interaction.user.id];
-        if (!autoResponseServers[interaction.guild.id] || !autoResponseServers[interaction.guild.id].responses || !focusedValue) return await interaction.respond([]);
+        if (!focusedValue) return await interaction.respond(autoResponseServers[interaction.guild.id].slice(0, 25).map(trigger => ({ name: trigger, value: trigger })));
         const filtered = autoResponseServers[interaction.guild.id].sort((a, b) => stringSimilarity(focusedValue, b, Math.min(3, focusedValue.length)) - stringSimilarity(focusedValue, a, Math.min(3, focusedValue.length))).slice(0, 25).filter(trigger => stringSimilarity(focusedValue, trigger, Math.min(3, focusedValue.length)) > 0).map(trigger => ({ name: trigger, value: trigger }));
         await interaction.respond(filtered);
     },
@@ -37,7 +37,7 @@ module.exports = {
         if (!disabledAutoResponses) return await interaction.reply('You have not disabled any autoresponses.');
         let serverDisabledAutoResponses = disabledAutoResponses[interaction.guild.id] ? disabledAutoResponses[interaction.guild.id] : userData[interaction.user.id].disabledAutoResponses[interaction.guild.id] = disabledAutoResponses[interaction.guild.id] = [];
         if (!serverDisabledAutoResponses.includes(trigger)) return await interaction.reply('You did not disable that autoresponse.');
-        userData[interaction.user.id].disabledAutoResponses[interaction.guild.id].filter(response => response !== trigger);
+        userData[interaction.user.id].disabledAutoResponses[interaction.guild.id] = userData[interaction.user.id].disabledAutoResponses[interaction.guild.id].filter(response => response !== trigger);
         fs.writeFileSync(`./data/users.json`, JSON.stringify(userData));
         await interaction.reply('Autoresponse enabled successfully!');
     }
