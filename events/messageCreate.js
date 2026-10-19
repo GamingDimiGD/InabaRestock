@@ -180,8 +180,11 @@ module.exports = {
         }
         try {
             if (message.guild && Object.keys(autoResponseServers).includes(message.guild.id) && autoResponseServers[message.guild.id].enabled) {
-                const { responses } = autoResponseServers[message.guild.id];
+                const { responses } = autoResponseServers[message.guild.id],
+                    { disabledAutoResponseServers } = JSON.parse(fs.readFileSync('./data/users.json', 'utf-8'))[message.author.id] || {},
+                    disabledAutoResponses = disabledAutoResponseServers[message.guild.id] || [];
                 for (const response of responses) {
+                    if (response.triggers.some(trigger => disabledAutoResponses.includes(trigger))) continue;
                     if (response.type === 'exact' && response.triggers.some(trigger => trigger.toLowerCase() === message.content.toLowerCase())) {
                         await message.channel.send({
                             content: response.response,

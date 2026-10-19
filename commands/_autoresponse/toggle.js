@@ -12,7 +12,6 @@ module.exports = {
         if (!interaction.member.permissions.has('ManageGuild')) {
             return await interaction.reply('You do not have permission to use this command.');
         }
-        // if (interaction.guild.id !== '1410959974842236930') return await interaction.reply('Other servers aren\'t supported yet.');
         const autoResponseServers = JSON.parse(fs.readFileSync('./data/autoResponseServers.json', 'utf8'));
         autoResponseServers[interaction.guild.id].enabled = !autoResponseServers[interaction.guild.id].enabled;
         fs.writeFileSync('./data/autoResponseServers.json', JSON.stringify(autoResponseServers, null, 4));

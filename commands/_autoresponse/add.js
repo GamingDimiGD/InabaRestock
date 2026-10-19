@@ -34,7 +34,6 @@ module.exports = {
         if (!interaction.member.permissions.has('ManageGuild')) {
             return await interaction.reply('You do not have permission to use this command.');
         }
-        // if (interaction.guild.id !== '1410959974842236930') return await interaction.reply('Other servers aren\'t supported yet.');
         const type = interaction.options.getString('type');
         const message = interaction.options.getString('message');
         const triggers = type === 'regex' ? [interaction.options.getString('triggers')] : interaction.options.getString('triggers').split(',').map(s => s.trim());

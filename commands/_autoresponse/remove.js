@@ -31,7 +31,6 @@ module.exports = {
         if (!interaction.member.permissions.has('ManageGuild')) {
             return await interaction.reply('You do not have permission to use this command.');
         }
-        // if (interaction.guild.id !== '1410959974842236930') return await interaction.reply('Other servers aren\'t supported yet.');
         const trigger = interaction.options.getString('trigger');
         let autoResponseServers = JSON.parse(fs.readFileSync('./data/autoResponseServers.json', 'utf8'));
         const saidTrigger = autoResponseServers[interaction.guild.id].responses.find(response => response.triggers.includes(trigger));
