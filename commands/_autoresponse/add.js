@@ -55,7 +55,7 @@ module.exports = {
         const stickerID = interaction.options.getString('sticker_id')
         if (stickerID) {
             if (isNaN(parseInt(stickerID))) return await interaction.reply('Invalid sticker ID.\n-# Enable developer mode > open sticker menu > right click the sticker > copy ID');
-            const sticker = interaction.guild.stickers.cache.get(stickerID) || await interaction.guild.stickers.fetch(stickerID);
+            const sticker = interaction.guild.stickers.cache.get(stickerID) || await interaction.guild.stickers.fetch(stickerID).then(sticker => sticker).catch(_=>{});
             if (!sticker) return await interaction.reply('Invalid sticker ID.\n-# Enable developer mode > open sticker menu > right click the sticker > copy ID');
         }
         autoResponseServers[interaction.guild.id].responses.push(
