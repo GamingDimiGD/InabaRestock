@@ -21,7 +21,7 @@ module.exports = {
         const focusedValue = interaction.options.getFocused();
         const autoResponseServers = JSON.parse(fs.readFileSync('./data/autoResponseServers.json', 'utf8'));
         if (!autoResponseServers[interaction.guild.id] || !autoResponseServers[interaction.guild.id].responses || !focusedValue) return await interaction.respond([]);
-        const filtered = autoResponseServers[interaction.guild.id].responses.map(response => response.triggers[findBestMatch(focusedValue, response.triggers)]).sort((a, b) => stringSimilarity(focusedValue, b, Math.min(3, focusedValue.length)) - stringSimilarity(focusedValue, a, Math.min(3, focusedValue.length))).slice(0, 25).filter(trigger => stringSimilarity(focusedValue, trigger, Math.min(3, focusedValue.length)) > 0).map(trigger => ({ name: (trigger + " => " + autoResponseServers[interaction.guild.id].find(response => response.triggers.includes(trigger))).slice(0, 100), value: trigger }));
+        const filtered = autoResponseServers[interaction.guild.id].responses.map(response => response.triggers[findBestMatch(focusedValue, response.triggers)]).sort((a, b) => stringSimilarity(focusedValue, b, Math.min(3, focusedValue.length)) - stringSimilarity(focusedValue, a, Math.min(3, focusedValue.length))).slice(0, 25).filter(trigger => stringSimilarity(focusedValue, trigger, Math.min(3, focusedValue.length)) > 0).map(trigger => ({ name: (trigger + " => " + autoResponseServers[interaction.guild.id].responses.find(response => response.triggers.includes(trigger)).response).slice(0, 100), value: trigger }));
         await interaction.respond(filtered);
     },
     async execute(interaction) {
