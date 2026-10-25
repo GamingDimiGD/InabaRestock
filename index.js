@@ -61,7 +61,7 @@ module.exports.getItems = getItems;
 
 const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js')
 const client = new Client({
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.DirectMessages, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildVoiceStates],
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.DirectMessages, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.GuildExpressions],
     partials: [Partials.Message, Partials.Channel, Partials.GuildMember, Partials.User],
 });
 
