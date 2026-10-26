@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, MessageFlags } = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -23,5 +23,6 @@ module.exports = {
     async execute(interaction) {
         const message = await interaction.channel.messages.fetch(interaction.options.getString("message_id"));
         await message.react(interaction.options.getString("emoji"));
+        await interaction.reply({ content: 'sent', flags: MessageFlags.Ephemeral });
     }
 };
