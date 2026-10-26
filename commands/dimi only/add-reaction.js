@@ -17,7 +17,7 @@ module.exports = {
         )
     ,
     async autocomplete(interaction) {
-        const focusedValue = interaction.options.getFocused(), emojis = interaction.client.emojis.cache.filter(emoji => emoji.toString().includes(focusedValue)).slice(0, 25).map(emoji => ({ name: emoji.name, value: emoji.id }));
+        const focusedValue = interaction.options.getFocused(), emojis = [...interaction.client.emojis.cache].filter(([_,emoji]) => emoji.toString().includes(focusedValue)).slice(0, 25).map(([_,emoji]) => ({ name: emoji.name, value: emoji.id }));
         await interaction.respond(emojis);
     },
     async execute(interaction) {
