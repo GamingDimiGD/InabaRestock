@@ -1,11 +1,7 @@
 const fs = require('fs');
 
 fs.writeFileSync("./ai/c.json", JSON.stringify({ t: Date.now() }))
-let cHandler = fs.existsSync('./ai/c.json') ? JSON.parse(fs.readFileSync('./ai/c.json', 'utf-8')) : {},
-    brain = fs.existsSync('./ai/brain.json') ? JSON.parse(fs.readFileSync('./ai/brain.json', 'utf-8')) : {},
-    smallBrain = fs.existsSync('./ai/smallBrain.json') ? JSON.parse(fs.readFileSync('./ai/smallBrain.json', 'utf-8')) : {},
-    tinyBrain = fs.existsSync('./ai/tinyBrain.json') ? JSON.parse(fs.readFileSync('./ai/tinyBrain.json', 'utf-8')) : {},
-    starterBrain = fs.existsSync('./ai/starterBrain.json') ? JSON.parse(fs.readFileSync('./ai/starterBrain.json', 'utf-8')) : {},
+const db = require('./database.js'),
     filler = [
         "a", "an", "the",
         "this", "that", "these", "those",
@@ -55,7 +51,11 @@ let cHandler = fs.existsSync('./ai/c.json') ? JSON.parse(fs.readFileSync('./ai/c
         "have", "has", "had"],
     nonQuestionAux = ["not"],
     bannedWords = ["<@1410941750641561730>", "@here", "@everyone", "?debug"],
-    keycount = Object.keys(brain).length + Object.keys(smallBrain).length + Object.keys(tinyBrain).length;
+    countKeys = db.prepare(`
+    SELECT COUNT(*) AS count
+    FROM ngrams
+`);
+let keycount = countKeys.get().count
 
 const isQuestion = (text) => {
     const words = text.toLowerCase().split(/\s+/)
@@ -63,23 +63,36 @@ const isQuestion = (text) => {
     if (auxVerbs.includes(words[0]) && !nonQuestionAux.includes(words[1])) return { type: 1 }
     return false
 }
-
-const createKey = (brain, key, next) => {
-    if (!key || !brain) return;
-    if (!brain[key] || typeof brain[key] !== 'object' || Array.isArray(brain[key])) brain[key] = Object.create(null);
-    brain[key][next] = (brain[key][next] || 0) + 1
+const insertKey = db.prepare(`
+    INSERT INTO ngrams (n, context, next_word, count)
+    VALUES (?, ?, ?, 1)
+    ON CONFLICT(n, context, next_word)
+    DO UPDATE SET count = count + excluded.count
+`);
+const insertStarter = db.prepare(`
+    INSERT INTO starters (context, count)
+    VALUES (?, 1)
+    ON CONFLICT(context)
+    DO UPDATE SET count = count + 1
+`);
+const createKey = (n, key, next) => {
+    insertKey.run(n, key, next);
 }
 
-const pickKey = (obj) => {
-    if (!obj) return { word: null, entries: null };
-    const entries = Object.entries(obj)
+const getEntries = db.prepare(`
+    SELECT next_word, count FROM ngrams
+    WHERE n = ? AND context = ?
+`);
+const pickKey = (n, key) => {
+    const obj = getEntries.all(n, key)
+    if (!obj.length) return { word: null, entries: null };
+    const entries = obj.map(({ next_word, count }) => [next_word, count])
     const total = entries.reduce((a, [, b]) => a + b, 0)
     let r = Math.random() * total
     for (const [word, count] of entries) {
-        if ((r -= count) <= 0) return { word, entries }
+        if ((r -= count) < 0) return { word, entries }
     }
 }
-let changesMade = false
 const learn = async (sentence) => {
     if (!sentence || sentence.split(/\s+/).length < 3) return;
     const words = sentence.toLowerCase().split(/\s+/).filter(f => {
@@ -94,64 +107,78 @@ const learn = async (sentence) => {
     });
     if (words.length === 0) return;
     if (words.length > 2) {
-        const starter = words.slice(0, 3).join(" ")
-        starterBrain[starter] = (starterBrain[starter] || 0) + 1
+        insertStarter.run(words.slice(0, 3).join(" "));
     }
     for (let i = 0; i < words.length - 3; i++) {
         const w1 = words[i], w2 = words[i + 1], w3 = words[i + 2], next = words[i + 3]
         if (next) {
-            createKey(brain, [w1, w2, w3].join(" "), next)
+            createKey(3, [w1, w2, w3].join(" "), next)
         }
         if (w3) {
-            createKey(smallBrain, [w2, w3].join(" "), next)
+            createKey(2, [w2, w3].join(" "), next)
         }
         if (w2) {
-            createKey(tinyBrain, w3, next)
+            createKey(1, w3, next)
         }
     }
-    changesMade = true
+    keycount = countKeys.get().count
     console.log('[AI] Learned sentence: ', sentence)
-    console.log('[AI] Brains\' size: ', Object.keys(brain).length + Object.keys(smallBrain).length + Object.keys(tinyBrain).length)
 }
-
-const save = () => {
-    if (!changesMade) return setTimeout(save, parseInt(JSON.parse(fs.readFileSync('./config.json', 'utf-8')).brainSaveInterval) * 1e3);
-    console.log('[AI] Autosaving...')
-    fs.writeFileSync("./ai/c.json", JSON.stringify({ t: Date.now() }))
-    if (!cHandler.t) return console.error("[AI] Storage error detected, aborting saving functions")
-    fs.writeFileSync('./ai/brain.json', JSON.stringify(brain))
-    fs.writeFileSync('./ai/smallBrain.json', JSON.stringify(smallBrain))
-    fs.writeFileSync('./ai/tinyBrain.json', JSON.stringify(tinyBrain))
-    fs.writeFileSync('./ai/starterBrain.json', JSON.stringify(starterBrain));
-    keycount = Object.keys(brain).length + Object.keys(smallBrain).length + Object.keys(tinyBrain).length
-    module.exports.keycount = keycount
-    console.log('[AI] Autosaved!')
-    changesMade = false
-    setTimeout(save, parseInt(JSON.parse(fs.readFileSync('./config.json', 'utf-8')).brainSaveInterval) * 1e3)
-}
-
-setTimeout(save, parseInt(JSON.parse(fs.readFileSync('./config.json', 'utf-8')).brainSaveInterval) * 1e3)
 
 const findBestKey = (keywords) => {
     keywords = keywords.filter(w => !filler.includes(w));
-    let best = null, bestScore = 0
+    let rows;
+    if (keywords.length)
+        rows = db.prepare(`
+            SELECT DISTINCT context
+            FROM ngrams
+            WHERE n = 3
+                AND (${keywords.map(() => 'instr(context, ?) > 0').join(' OR ')})
 
-    let scores = Object.keys(brain).map(key => {
-        const score = keywords.reduce((a, b) => {
-            return (key.includes(b) ? 1 : 0) + a
-        }, 0) + (starterBrain[key] ? 2 : 0)
-        return { score, key }
-    })
-    for (let score of scores) {
-        if (score.score > bestScore) {
-            bestScore = score.score
-            best = score.key
+            UNION
+
+            SELECT context FROM starters
+        `).all(...keywords);
+    else rows = db.prepare('SELECT context FROM starters').all();
+    const starterSet = new Set(
+        db.prepare('SELECT context FROM starters').pluck().all()
+    );
+
+    const scores = rows.map(({ context }) => {
+        const score =
+            keywords.reduce((total, word) =>
+                total + (context.includes(word) ? 1 : 0), 0
+            ) + (starterSet.has(context) ? 2 : 0);
+
+        return { score, key: context };
+    });
+    let bestScore = 0;
+    try {
+        bestScore = Math.max(0, ...scores.map(s => s.score));
+    } catch (error) {
+        console.warn(`[AI] Math.max failed, resorting to the evil and laggy method.`);
+        for (let score of scores) {
+            if (score.score > bestScore) {
+                bestScore = score.score
+                best = score.key
+            }
         }
     }
-    if (bestScore === 0) return { best: null, bestOnes: [], bestScore };
-    const bestOnes = scores.filter(s => s.score === bestScore)
-    best = bestOnes[Math.floor(Math.random() * bestOnes.length)]?.key
-    return { best: best?.split(" "), bestOnes, bestScore }
+
+    if (bestScore === 0) {
+        return { best: null, bestOnes: [], bestScore };
+    }
+
+    const bestOnes = scores.filter(s => s.score === bestScore);
+    const best = bestOnes[
+        Math.floor(Math.random() * bestOnes.length)
+    ]?.key;
+
+    return {
+        best: best?.split(' '),
+        bestOnes,
+        bestScore
+    };
 }
 
 let lastReplyTime = 0
@@ -190,12 +217,12 @@ const reply = (input, learns = true) => {
     }
     while (response.length < 50) {
         let key = [w1, w2, w3].join(" ")
-        let { word: b3, entries: e3 } = pickKey(brain[key]),
-            { word: b2, entries: e2 } = pickKey(smallBrain[w2 + " " + w3]),
-            { word: b1, entries: e1 } = pickKey(tinyBrain[w3])
-        word = (
-            b3 || b2 || (isQuestion(input) ? b1 : null)
-        )
+        let { word: b3, entries: e3 } = pickKey(3, key),
+            { word: b2, entries: e2 } = pickKey(2, w2 + " " + w3),
+            { word: b1, entries: e1 } = pickKey(1, w3),
+            word = (
+                b3 || b2 || (isQuestion(input) ? b1 : null)
+            )
         metadata.keyInfo[key] = {
             next: word,
             b3, b2, b1, e3, e2, e1,
@@ -215,7 +242,7 @@ const reply = (input, learns = true) => {
     if (learns && !isQuestion(input)) learn(input);
     lastReplyTime = Date.now()
     if (response.join(' ') === words.join(' ').toLowerCase())
-        return reply(Object.keys(brain)[Math.floor(Math.random() * Object.keys(brain).length)])
+        return reply('', false)
     return {
         response: response.join(' ').replaceAll('@everyone', 'everyone').replaceAll('@here', 'here'),
         metadata

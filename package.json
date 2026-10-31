@@ -24,6 +24,7 @@
   "dependencies": {
     "@discordjs/voice": "^0.19.2",
     "archiver": "^8.0.0",
+    "better-sqlite3": "^13.0.3",
     "cheerio": "^1.2.0",
     "discord": "^0.8.2",
     "discord.js": "^14.26.4",

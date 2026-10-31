@@ -1,6 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js"),
-    fs = require("fs")
-
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js"), db = require('../../ai/database.js'), fs = require('fs');
 
 const toFileSize = (bytes) => {
     const units = ['bytes', 'KB', 'MB', 'GB'];
@@ -12,6 +10,13 @@ const toFileSize = (bytes) => {
     return `${n.toFixed(n < 10 && l > 0 ? 1 : 0)} ${units[l]}`
 }
 
+const countKeys = db.prepare(`
+    SELECT COUNT(DISTINCT context) AS count
+    FROM ngrams
+    WHERE n = ?
+`);
+const countStarters = db.prepare('SELECT COUNT(*) AS count FROM starters');
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("brain-data")
@@ -19,18 +24,15 @@ module.exports = {
     ,
     async execute(interaction) {
         await interaction.deferReply();
-        const tinyBrain = JSON.parse(fs.readFileSync('./ai/tinyBrain.json', 'utf-8')),
-            smallBrain = JSON.parse(fs.readFileSync('./ai/smallBrain.json', 'utf-8')),
-            brain = JSON.parse(fs.readFileSync('./ai/brain.json', 'utf-8')),
-            starterBrain = JSON.parse(fs.readFileSync('./ai/starterBrain.json', 'utf-8'));
         const embed = new EmbedBuilder()
             .setTitle("InabaRestock's AI Brain data")
             .addFields(
-                [tinyBrain, smallBrain, brain, starterBrain].map((b, i) => ({
+                [countKeys.get(1).count, countKeys.get(2).count, countKeys.get(3).count, countStarters.get().count].map((b, i) => ({
                     name: i === 0 ? "Tiny Brain" : i === 1 ? "Small Brain" : i === 2 ? "Brain" : "Starter Brain",
-                    value: `Size: ${toFileSize(Object.keys(b).length)}\nKeys: ${Object.keys(b).length}`,
+                    value: `Keys: ${b}`,
                 }))
         )
+            .setFooter({ text: "Brain size: " + toFileSize(fs.readFileSync('./ai/brain.db', 'utf-8').length) })
         await interaction.editReply({ embeds: [embed] });
     },
 };
