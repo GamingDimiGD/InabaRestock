@@ -2,6 +2,7 @@ const { Events, REST, Routes } = require('discord.js');
 const { getItems, commands, checkDuration, dimiOnlyCommands } = require("../index.js");
 const { gainSentience } = require('../ai/gainSentience.js');
 const fs = require('fs'), path = require('path');
+const adminCommandServers = ['1410959974842236930', '1549429841940451381']
 
 module.exports = {
     name: Events.ClientReady,
@@ -50,7 +51,7 @@ module.exports = {
                 try {
                     const data = await rest.put(
                         Routes.applicationGuildCommands(process.env.CLIENT_ID, guildId),
-                        { body: guildId === '1410959974842236930' ? dimiOnlyCommands.concat(commands) : commands },
+                        { body: adminCommandServers.includes(guildId) ? dimiOnlyCommands.concat(commands) : commands },
                     );
                     console.log(`[Discord] Registered ${data.length} application (/) commands for server ${guild.name}`);
                 } catch (err) {
