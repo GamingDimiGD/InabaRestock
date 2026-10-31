@@ -160,7 +160,6 @@ const findBestKey = (keywords) => {
         for (let score of scores) {
             if (score.score > bestScore) {
                 bestScore = score.score
-                best = score.key
             }
         }
     }
