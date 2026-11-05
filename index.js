@@ -103,6 +103,8 @@ for (const folder of commandFolders) {
                 dimiOnlyCommands.push(command.data.toJSON());
                 client.dimiOnlyCommands.set(command.data.name, command);
             } else {
+                command.data.interaction_types = command.data.interaction_types || [0, 1];
+                command.data.contexts = command.data.contexts || [0, 1, 2];
                 commands.push(command.data.toJSON());
                 client.commands.set(command.data.name, command);
             }
