@@ -55,9 +55,10 @@ module.exports = {
             option.setName("question")
                 .setDescription("Your question")
                 .setRequired(true)
+                .setMaxLength(200)
         )
     ,
     async execute(interaction) {
-        await interaction.reply(responses[Math.floor(Math.random() * responses.length)]);
+        await interaction.reply(`Q. ${interaction.options.getString("question")}\nA. ${responses[Math.floor(Math.random() * responses.length)]}`);
     }
 };
