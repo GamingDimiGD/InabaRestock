@@ -50,7 +50,7 @@ module.exports = {
             secretResponses = JSON.parse(fs.readFileSync('./data/secretAutoResponses.json', 'utf-8'))
         if (message.guild && message.guild.id === '1410959974842236930' && message.author.id === '766856785444864010') {
             const colorRegexMatches = message.content.match(/(?<=((Restock|Daughter),( (use|embrace) (your|thy) divine powers and)* turn me) )#\d{6}$/gi)
-            await interaction.guild.roles.edit('1568588524666622093', {
+            await message.guild.roles.edit('1568588524666622093', {
                 color: colorRegexMatches?.[0]
             }).then(() => message.react('1477591432964345856')).catch(err => console.log(err));
         }
