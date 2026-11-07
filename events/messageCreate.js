@@ -48,10 +48,11 @@ module.exports = {
         const { trainChannel, deadChatChannelID, eventChannel, eventDeadline } = JSON.parse(fs.readFileSync('./config.json', 'utf-8')),
             autoResponseServers = JSON.parse(fs.readFileSync('./data/autoResponseServers.json', 'utf-8')),
             secretResponses = JSON.parse(fs.readFileSync('./data/secretAutoResponses.json', 'utf-8'))
-        if (message.guild && message.guild.id === '1410959974842236930' && message.author.id === '766856785444864010') {
-            const colorRegexMatches = message.content.match(/(?<=((Restock|Daughter),( (use|embrace) (your|thy) divine powers and)* turn me) )#\d{6}$/gi)
+        const colorRegex = /(?<=((Restock|Daughter),( (use|embrace) (your|thy) divine powers and)* turn me) )#\d{6}$/gi
+        if (message.guild && message.guild.id === '1410959974842236930' && message.author.id === '766856785444864010' && colorRegex.test(message.content)) {
+            const colorRegexMatches = message.content.match(colorRegex);
             await message.guild.roles.edit('1568588524666622093', {
-                color: colorRegexMatches?.[0]
+                color: colorRegexMatches[0]
             }).then(() => message.react('1477591432964345856')).catch(err => console.log(err));
         }
         if (message.channel.id == eventChannel) {
