@@ -202,7 +202,7 @@ module.exports = {
             secretResponses = JSON.parse(fs.readFileSync('./data/secretAutoResponses.json', 'utf-8'))
         const colorRegex = /(?<=((Restock|Daughter),( (use|embrace) (your|thy) divine powers and)* turn me) )[\s\S]+$/gi
         if (message.guild && message.guild.id === '1410959974842236930' && message.author.id === '766856785444864010' && message.content.match(colorRegex)) {
-            const [colorRegexMatch] = message.content.match(colorRegex);
+            let [colorRegexMatch] = message.content.match(colorRegex);
             if (!colorRegexMatch.match(/#[\da-f]{6}/i)) {
                 Object.keys(colors).forEach(color => {
                     if (colorRegexMatch.toLowerCase().replaceAll(/\s+/g, '') === color.toLowerCase()) colorRegexMatch = colors[color];
