@@ -296,6 +296,7 @@ module.exports = {
             if (checkProfanity(message.content).containsProfanity) {
                 return message.reply("woah woah woah don't swear dude")
             }
+            message.channel.sendTyping().catch(err => console.log(err));
             let res = reply(message.content.replaceAll("<@1410941750641561730>", "").trim().replaceAll("?debug", ""))
             message.reply(res.response.replaceAll(/<@[0-9]+>|<@&[0-9]+>/g, "[mention blocked]")).catch(err => console.log(err));
             if (message.content.includes("?debug")) {
