@@ -27,6 +27,6 @@ module.exports = {
         const celsius = fromUnit === 'C' ? number : fromUnit === 'F' ? (number - 32) * (5 / 9) : (number - 273.15);
         const fahrenheit = fromUnit === 'F' ? number : fromUnit === 'C' ? celsius * (9 / 5) + 32 : celsius * (9 / 5) + 32 + 273.15;
         const kelvin = fromUnit === 'K' ? number : fromUnit === 'C' ? celsius + 273.15 : celsius + 273.15;
-        await interaction.reply(`Celsius: ${celsius.toFixed(2)}°C\nFahrenheit: ${fahrenheit.toFixed(2)}°F\nKelvin: ${kelvin.toFixed(2)}K`);
+        return await interaction.reply(`Celsius: ${celsius.toFixed(2)}°C\nFahrenheit: ${fahrenheit.toFixed(2)}°F\nKelvin: ${kelvin.toFixed(2)}K`);
     }
 };

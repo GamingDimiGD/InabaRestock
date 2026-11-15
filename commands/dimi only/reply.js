@@ -27,9 +27,9 @@ module.exports = {
             const message = await interaction.client.channels.cache.get(channelID).messages.fetch(messageID);
             if (!message) return await interaction.reply({ content: 'Message not found', flags: MessageFlags.Ephemeral });
             await message.reply(interaction.options.getString("input"));
-            await interaction.reply({ content: 'sent', flags: MessageFlags.Ephemeral });
+            return await interaction.reply({ content: 'sent', flags: MessageFlags.Ephemeral });
         } catch (error) {
-            await interaction.reply({ content: `Error: \`\`\`${error.message}\`\`\``, flags: MessageFlags.Ephemeral });
+            return await interaction.reply({ content: `Error: \`\`\`${error.message}\`\`\``, flags: MessageFlags.Ephemeral });
         }
     },
 };

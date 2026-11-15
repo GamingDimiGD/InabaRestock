@@ -23,7 +23,7 @@ module.exports = {
         .setDescription("Check the brain data of the AI")
     ,
     async execute(interaction) {
-        await interaction.deferReply();
+        await interaction.deferReply().catch(() => {});
         const embed = new EmbedBuilder()
             .setTitle("InabaRestock's AI Brain data")
             .addFields(
@@ -33,6 +33,6 @@ module.exports = {
                 }))
         )
             .setFooter({ text: "Brain size: " + toFileSize(fs.readFileSync('./ai/brain.db', 'utf-8').length) })
-        await interaction.editReply({ embeds: [embed] });
+        return await interaction.editReply({ embeds: [embed] });
     },
 };

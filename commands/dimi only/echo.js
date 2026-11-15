@@ -28,16 +28,16 @@ module.exports = {
         }
         if (channelID) try {
             await interaction.client.channels.cache.get(channelID).send(interaction.options.getString("input"));
-            await interaction.reply({ content: 'sent', flags: MessageFlags.Ephemeral })
+            return await interaction.reply({ content: 'sent', flags: MessageFlags.Ephemeral })
         } catch (error) {
-            interaction.reply(`Error: ${error.message}`)
+            return await interaction.reply(`Error: ${error.message}`)
         }
         if (userID) try {
             const user = await interaction.client.users.fetch(userID);
             user.send(interaction.options.getString("input"));
-            await interaction.reply({ content: 'sent', flags: MessageFlags.Ephemeral })
+            return await interaction.reply({ content: 'sent', flags: MessageFlags.Ephemeral })
         } catch (error) {
-            interaction.reply(`Error: ${error.message}`)
+            return await interaction.reply(`Error: ${error.message}`)
         }
     },
 };

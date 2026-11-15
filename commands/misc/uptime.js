@@ -6,6 +6,6 @@ module.exports = {
         .setDescription("check bot uptime")
     ,
     async execute(interaction) {
-        return interaction.reply(`server is up since <t:${Math.floor(( Date.now() - Math.floor(performance.now()) ) / 1e3)}:R> and client has been up since <t:${Math.floor(( Date.now() - Math.floor(interaction.client.uptime) ) / 1e3)}:R>`);
+        return await interaction.reply(`server is up since <t:${Math.floor(( Date.now() - Math.floor(performance.now()) ) / 1e3)}:R> and client has been up since <t:${Math.floor(( Date.now() - Math.floor(interaction.client.uptime) ) / 1e3)}:R>`);
     }
 };

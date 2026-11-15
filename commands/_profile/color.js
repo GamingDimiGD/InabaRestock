@@ -11,7 +11,7 @@ module.exports = {
                 .setRequired(true)
         ),
     async execute(interaction) {
-        await interaction.deferReply();
+        await interaction.deferReply().catch(() => {});
         const color = interaction.options.getString('hex-code');
         if (!/^#([0-9A-F]{3}){1,2}$/i.test(color)) return await interaction.editReply("Invalid hex code, please provide a valid hex code (e.g. #FF0000)\n[Color picker](https://www.google.com/search?q=color+picker)");
         if (!fs.existsSync(`./data/users.json`)) fs.writeFileSync(`./data/users.json`, "{}");
@@ -19,6 +19,6 @@ module.exports = {
         if (!userData[interaction.user.id]) userData[interaction.user.id] = {};
         userData[interaction.user.id].color = color;
         fs.writeFileSync(`./data/users.json`, JSON.stringify(userData));
-        interaction.editReply(`your profile\'s embed color has been set to ${color}!`);
+        return await interaction.editReply(`your profile\'s embed color has been set to ${color}!`);
     },
 }

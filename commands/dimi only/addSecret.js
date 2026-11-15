@@ -35,7 +35,7 @@ module.exports = {
         const secretResponses = JSON.parse(fs.readFileSync('./data/secretAutoResponses.json', 'utf8'));
         secretResponses.push({ response: message, triggers, type, discovered: false });
         fs.writeFileSync('./data/secretAutoResponses.json', JSON.stringify(secretResponses, null, 4));
-        await interaction.reply({
+        return await interaction.reply({
             content: 'Autoresponse added successfully!' + (type === 'regex' ? `\n-# §0 means first match, §1 means second match etc. Only 1 trigger is allowed for regex autoresponses.` : ''),
             flags: MessageFlags.Ephemeral
         });

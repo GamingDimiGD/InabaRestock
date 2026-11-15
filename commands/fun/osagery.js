@@ -42,15 +42,15 @@ module.exports = {
         )
     },
     async execute(interaction) {
-        await interaction.deferReply();
+        await interaction.deferReply().catch(() => {});
         const imageDataList = await fetch(URL + "data.json?t=" + Date.now(), {
             cache: "no-store",
         }).then(res => res.text()).then(text => JSON.parse(text));
-        if (!imageDataList || !imageDataList.length) return interaction.editReply("something broke lmao");
+        if (!imageDataList || !imageDataList.length) return await interaction.editReply("something broke lmao");
         let number = (interaction.options.getInteger('number')
             ?? findBestMatch(interaction.options.getString('search'), imageDataList) + 1) 
             || Math.floor(Math.random() * imageDataList.length) + 1
-        if (number > imageDataList.length || number < 1) return interaction.editReply(`invalid number, must be between 1 and ${imageDataList.length}`);
+        if (number > imageDataList.length || number < 1) return await interaction.editReply(`invalid number, must be between 1 and ${imageDataList.length}`);
         let { name, submitted_by, artist, edited_by, searchName } = imageDataList[number - 1];
         let artistData, editedByData;
         if (artist) artistData = await fetch(URL + "artistData.json?t=" + Date.now(), {
@@ -69,7 +69,7 @@ module.exports = {
         const imageUrl = URL + "images/" + name;
 
         const submitter = await interaction.client.users.fetch(submitted_by).catch(() => null);
-        await interaction.editReply({
+        return await interaction.editReply({
             embeds: [
                 new EmbedBuilder()
                     .setTitle(name)

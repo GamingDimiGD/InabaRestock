@@ -22,12 +22,12 @@ module.exports = {
         )
     ,
     async execute(interaction) {
-        let message = await interaction.reply("Checking the stock of items...\n-# This may take a while");
+        await interaction.reply("Checking the stock of items...\n-# This may take a while");
         const items = await getItems(
             interaction.options.getString("subdomain") || "inabakumori",
             Array.from({ length: interaction.options.getNumber("pages") || 2 }, (_, i) => i + 1) || [1, 2], interaction.options.getBoolean("dont_cache")
         );
-        if (!items.length) return await message.edit("# NO ITEMS FOUND");
-        await message.edit(`# ${items.filter(i => !i.soldOut).length}/${items.length} IN STOCK\n${items.map(i => `${i.name} ${i.soldOut ? "❌" : "✅"}`).join("\n")}`);
+        if (!items.length) return await interaction.editReply("# NO ITEMS FOUND");
+        return await interaction.editReply(`# ${items.filter(i => !i.soldOut).length}/${items.length} IN STOCK\n${items.map(i => `${i.name} ${i.soldOut ? "❌" : "✅"}`).join("\n")}`);
     },
 };

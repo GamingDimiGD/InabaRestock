@@ -38,6 +38,6 @@ module.exports = {
         autoResponseServers[interaction.guild.id].responses = autoResponseServers[interaction.guild.id].responses.filter(response => response.triggers.includes(trigger) === false);
         if (!autoResponseServers[interaction.guild.id].responses.length) delete autoResponseServers[interaction.guild.id];
         fs.writeFileSync('./data/autoResponseServers.json', JSON.stringify(autoResponseServers, null, 4));
-        await interaction.reply('Autoresponse removed successfully!');
+        return await interaction.reply('Autoresponse removed successfully!');
     }
 };

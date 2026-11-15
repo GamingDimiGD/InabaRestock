@@ -22,13 +22,13 @@ module.exports = {
         const question = interaction.options.getString("question");
         let learn = interaction.options.getBoolean("learn") || false;
         if (!trustedUsers.includes(interaction.user.id) && learn) {
-            await interaction.channel.send('Warning: Only trusted users can enable learning. The AI will not learn from this interaction.');
             learn = false;
+            return await interaction.channel.send('Warning: Only trusted users can enable learning. The AI will not learn from this interaction.');
         }
-        await interaction.deferReply();
+        await interaction.deferReply().catch(() => {});
         let replyMessage = await reply(question, learn).response;
         if (!replyMessage) console.error(`[AI] Failed to get a reply for the question: ${question}`);
         replyMessage = `Q. ${question} \nA. ${replyMessage.replaceAll(/<@[0-9]+>|<@&[0-9]+>/g, "[mention blocked]")}`;
-        await interaction.editReply(replyMessage || "i am merl and i dont know anything");
+        return await interaction.editReply(replyMessage || "i am merl and i dont know anything");
     }
 };

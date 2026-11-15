@@ -13,14 +13,14 @@ module.exports = {
     async execute(interaction) {
         const code = interaction.options.getString("code");
         const { exec } = require("child_process");
-        await interaction.deferReply();
+        await interaction.deferReply().catch(() => {});
         exec(code, async (error, stdout, stderr) => {
             if (error) {
                 await interaction.editReply(`Error: \`\`\`${error.message}\`\`\``);
                 return;
             }
             console.log(`[std] ${stdout || stderr}`);
-            await interaction.editReply(`\`\`\`${(stdout || stderr).toString().slice(0, 1000)}\`\`\``);
+            await interaction.editReply(`\`\`\`${(stdout || stderr).toString().slice(0, 1000)}\`\`\``).catch(() => {});
         });
     }
 };

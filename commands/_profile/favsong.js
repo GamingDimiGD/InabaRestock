@@ -20,15 +20,15 @@ module.exports = {
         await interaction.respond(filtered);
     },
     async execute(interaction) {
-        await interaction.deferReply();
+        await interaction.deferReply().catch(() => {});
         const songs = JSON.parse(fs.readFileSync("./songs.json", "utf-8"));
         let song = songs.find(song => song.title === interaction.options.getString("song"));
-        if (!song) return interaction.editReply("no such song, please use the autocomplete to find your song");
+        if (!song) return await interaction.editReply("no such song, please use the autocomplete to find your song");
         if (!fs.existsSync(`./data/users.json`)) fs.writeFileSync(`./data/users.json`, "{}");
         let userData = JSON.parse(fs.readFileSync(`./data/users.json`, "utf-8"))
         if (!userData[interaction.user.id]) userData[interaction.user.id] = {};
         userData[interaction.user.id].favSong = song.title;
         fs.writeFileSync(`./data/users.json`, JSON.stringify(userData));
-        interaction.editReply(`your favorite song has been set to ${song.title}!`);
+        return await interaction.editReply(`your favorite song has been set to ${song.title}!`);
     },
 }

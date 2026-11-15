@@ -21,7 +21,7 @@ module.exports = {
     ,
     async execute(interaction) {
         const channel = interaction.member.voice.channel;
-        await interaction.reply('joining vc...');
+        await interaction.reply('joining vc...').catch(() => {});
         const connection = joinVoiceChannel({
             channelId: channel.id,
             guildId: channel.guild.id,
@@ -79,6 +79,6 @@ module.exports = {
         connection.subscribe(player);
         player.play(resource);
 
-        await interaction.editReply('prepare thy ears');
+        return await interaction.editReply('prepare thy ears');
     }
 }

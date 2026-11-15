@@ -46,6 +46,6 @@ module.exports = {
                         Array.from({ length: pages.length }, (_, i) => ({ label: `Page ${i + 1}`, value: `${i + 1}` }))
                     )
             )
-        await interaction.reply({ embeds: [embed], components: [row] })
+        return await interaction.reply({ embeds: [embed], components: [row] })
     }
 };

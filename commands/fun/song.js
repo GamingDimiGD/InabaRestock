@@ -33,7 +33,7 @@ module.exports = {
         await interaction.respond(filtered);
     },
     async execute(interaction) {
-        await interaction.deferReply();
+        await interaction.deferReply().catch(() => {});
         const songs = JSON.parse(fs.readFileSync("./songs.json", "utf-8"));
         const number = (
             interaction.options.getInteger("number")
@@ -51,6 +51,6 @@ module.exports = {
         else if (song.date && song.dateAccuracy === "y") embed.setFooter({ text: `Released at • ${new Date(song.date).getFullYear()}` })
         else if (song.date && song.dateAccuracy === "d") embed.setFooter({ text: `Released at • ${new Date(song.date).toDateString()}` })
         if (isYTLink) embed.setImage(`https://img.youtube.com/vi/${song.link.replace("https://youtu.be/", "")}/0.jpg`);
-        await interaction.editReply({ embeds: [embed] });
+        return await interaction.editReply({ embeds: [embed] });
     },
 };

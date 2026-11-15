@@ -10,11 +10,11 @@ module.exports = {
         .setDescription('join vc'),
 
     async execute(interaction) {
-        await interaction.deferReply();
+        await interaction.deferReply().catch(() => {});
         const channel = interaction.member.voice.channel;
 
         if (!channel) {
-            return interaction.editReply({ content: "join vc first", flags: MessageFlags.Ephemeral });
+            return await interaction.editReply({ content: "join vc first", flags: MessageFlags.Ephemeral });
         }
 
         const connection = joinVoiceChannel({
@@ -28,7 +28,7 @@ module.exports = {
             console.log(
                 `[VOICE] ${oldState.status} -> ${newState.status}`
             );
-            await interaction.editReply({ content: '```' + newState.status + '```', flags: MessageFlags.Ephemeral });
+            return await interaction.editReply({ content: '```' + newState.status + '```', flags: MessageFlags.Ephemeral });
         });
 
         try {
@@ -38,12 +38,12 @@ module.exports = {
                 3e4
             );
 
-            await interaction.editReply({ content: 'joined', flags: MessageFlags.Ephemeral });
+            return await interaction.editReply({ content: 'joined', flags: MessageFlags.Ephemeral });
         } catch (error) {
             connection.destroy();
             console.error(error);
 
-            await interaction.editReply({ content: '```' + error.message + '```', flags: MessageFlags.Ephemeral });
+            return await interaction.editReply({ content: '```' + error.message + '```', flags: MessageFlags.Ephemeral });
         }
     }
 };

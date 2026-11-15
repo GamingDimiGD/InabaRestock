@@ -10,7 +10,7 @@ module.exports = {
         .setDescription("Check everyone who contributed to this bot!")
     ,
     async execute(interaction) {
-        await interaction.reply({
+        return await interaction.reply({
             embeds: [
                 new EmbedBuilder()
                     .setTitle("Contributors")

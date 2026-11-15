@@ -20,7 +20,7 @@ module.exports = {
                 .setStyle(ButtonStyle.Primary)
         );
 
-        await interaction.reply({
+        return await interaction.reply({
             content: `You rolled a ${result} (${sides} sides)`, components: [row]
         });
     }

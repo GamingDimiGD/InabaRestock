@@ -22,7 +22,7 @@ module.exports = {
         if (pfp.endsWith('.webp')) pfp = pfp.replace('.webp', '.png');
         if (Date.now() - lastBoil < commandCooldown) return await interaction.reply('i need a break bro my cpu\'s getting fried, i\'ll be back <t:' + Math.floor((lastBoil + commandCooldown) / 1e3) + ':R>');
         lastBoil = Date.now();
-        await interaction.reply('hold on a sec, im salting...');
+        await interaction.deferReply().catch(() => {});
         console.log('[boil] Boiling ' + pfp);
         const res = await fetch(`https://${boilURL}/api/salt?avatarlink=${encodeURIComponent(pfp)}&key=${process.env.API_KEY}`, {
             headers: {
@@ -33,7 +33,7 @@ module.exports = {
             console.log('[salt] Error: ' + res.statusText);
             return await interaction.editReply(`Error: \`\`\`${res.statusText}\`\`\``);
         }
-        await interaction.editReply({
+        return await interaction.editReply({
             content: `salted <@${interaction.options.getUser('user').id}>!`,
             files: [new AttachmentBuilder(res.body, { name: 'salt.mp4' })]
         });

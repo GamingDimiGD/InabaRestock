@@ -33,7 +33,7 @@ module.exports = {
         .setName("plush-info")
         .setDescription("fetch the info of the osage plush"),
     async execute(interaction) {
-        await interaction.deferReply();
+        await interaction.deferReply().catch(() => {});
         try {
             const cache = await fetchPlushInfo();
             const embed = new EmbedBuilder()
@@ -54,7 +54,7 @@ module.exports = {
             interaction.editReply({ embeds: [embed] });
         } catch (error) {
             console.log(error);
-            interaction.editReply("Failed to fetch plush info: ```" + error.message + "```");
+            return await interaction.editReply("Failed to fetch plush info: ```" + error.message + "```");
         }
     }
 }

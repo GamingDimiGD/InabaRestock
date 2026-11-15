@@ -59,6 +59,6 @@ module.exports = {
         )
     ,
     async execute(interaction) {
-        await interaction.reply(`Q. ${interaction.options.getString("question")}\nA. ${responses[Math.floor(Math.random() * responses.length)]}`);
+        return await interaction.reply(`Q. ${interaction.options.getString("question")}\nA. ${responses[Math.floor(Math.random() * responses.length)]}`);
     }
 };

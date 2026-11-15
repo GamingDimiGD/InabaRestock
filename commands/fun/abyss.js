@@ -13,6 +13,6 @@ module.exports = {
     ,
     async execute(interaction) {
         const user = interaction.options.getUser('user');
-        await interaction.reply(`${user} has been dragged into the hadal abyss zone!`);
+        return await interaction.reply(`${user} has been dragged into the hadal abyss zone!`);
     }
 };

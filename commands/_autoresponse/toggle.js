@@ -15,6 +15,6 @@ module.exports = {
         const autoResponseServers = JSON.parse(fs.readFileSync('./data/autoResponseServers.json', 'utf8'));
         autoResponseServers[interaction.guild.id].enabled = !autoResponseServers[interaction.guild.id].enabled;
         fs.writeFileSync('./data/autoResponseServers.json', JSON.stringify(autoResponseServers, null, 4));
-        await interaction.reply(`Autoresponse for this server is now ${autoResponseServers[interaction.guild.id].enabled ? 'enabled' : 'disabled'}.`);
+        return await interaction.reply(`Autoresponse for this server is now ${autoResponseServers[interaction.guild.id].enabled ? 'enabled' : 'disabled'}.`);
     },
 };

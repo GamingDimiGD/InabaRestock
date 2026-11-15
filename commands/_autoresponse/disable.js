@@ -39,6 +39,6 @@ module.exports = {
         if (serverDisabledAutoResponses.includes(trigger)) return await interaction.reply('You already disabled that autoresponse.');
         userData[interaction.user.id].disabledAutoResponses[interaction.guild.id].push(trigger);
         fs.writeFileSync(`./data/users.json`, JSON.stringify(userData));
-        await interaction.reply('Autoresponse disabled successfully!\nThis applies to every single trigger of the autoresponse.');
+        return await interaction.reply('Autoresponse disabled successfully!\nThis applies to every single trigger of the autoresponse.');
     }
 };

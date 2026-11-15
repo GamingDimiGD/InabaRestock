@@ -34,6 +34,6 @@ module.exports = {
         }));
         player.play(resource);
         connection.subscribe(player);
-        await interaction.reply({ content: 'speaking rn', flags: MessageFlags.Ephemeral });
+        return await interaction.reply({ content: 'speaking rn', flags: MessageFlags.Ephemeral });
     }
 }

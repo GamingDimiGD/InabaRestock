@@ -7,8 +7,8 @@ module.exports = {
         .setDescription("Generate a sentence without prompt")
     ,
     async execute(interaction) {
-        await interaction.deferReply();
+        await interaction.deferReply().catch(() => {});
         let replyMessage = await reply('', false).response;
-        await interaction.editReply(replyMessage.replaceAll(/<@[0-9]+>|<@&[0-9]+>/g, "[mention blocked]") || "i am merl and i dont know anything");
+        return await interaction.editReply(replyMessage.replaceAll(/<@[0-9]+>|<@&[0-9]+>/g, "[mention blocked]") || "i am merl and i dont know anything");
     }
 };

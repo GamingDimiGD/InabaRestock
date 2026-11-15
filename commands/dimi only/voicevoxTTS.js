@@ -72,12 +72,12 @@ module.exports = {
             adapterCreator: voiceChannel.guild.voiceAdapterCreator
         })
         if (!connection) return interaction.editReply({ content: 'join vc first', flags: MessageFlags.Ephemeral });
-        await interaction.deferReply();
+        await interaction.deferReply().catch(() => {});
         const player = createAudioPlayer();
         const tts = await fetchVOICEVOX(interaction.options.getString('text'), interaction.options.getInteger('voicebank') ?? JSON.parse(fs.readFileSync('./config.json', 'utf8')).defaultVB ?? 108);
         const resource = createAudioResource('tts.mp3');
         player.play(resource);
         connection.subscribe(player);
-        await interaction.editReply('speaking rn');
+        return await interaction.editReply('speaking rn');
     }
 }

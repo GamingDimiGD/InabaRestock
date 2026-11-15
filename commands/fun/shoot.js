@@ -22,11 +22,11 @@ module.exports = {
                         .setStyle(ButtonStyle.Danger)
                 )
             ]
-        });
+        }).catch(() => {});
         const collector = message.createMessageComponentCollector({ componentType: ComponentType.Button, time: 15000, filter: i => i.customId === 'parry' });
         collector.on('collect', async i => {
             if (i.user.id !== user.id) return await i.reply({ content: 'only the victim can parry bro', ephemeral: true });
-            await i.deferUpdate();
+            await i.deferUpdate().catch(() => {});
             const rng = Math.floor(Math.random() * 10) + 1;
             let content = rng > 9 ? `${user} has parried ${interaction.user}'s bullet!` : `bro tried to parry a bullet lmao`
             await i.editReply({
@@ -40,12 +40,12 @@ module.exports = {
                             .setDisabled(true)
                     )
                 ]
-            });
+            }).catch(() => {});
             collector.stop();
         });
-        collector.on('end', collected => {
+        collector.on('end', async collected => {
             if (collected.size === 0) {
-                interaction.editReply({
+                return await interaction.editReply({
                     content: `${interaction.user} has shot ${user}!`,
                     components: [
                         new ActionRowBuilder().addComponents(
@@ -56,7 +56,7 @@ module.exports = {
                                 .setDisabled(true)
                         )
                     ]
-                });
+                }).catch(() => {});
             }
         });
     }

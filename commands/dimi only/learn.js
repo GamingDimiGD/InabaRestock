@@ -13,6 +13,6 @@ module.exports = {
     async execute(interaction) {
         const input = interaction.options.getString("input").split("|")
         input.forEach(learn)
-        interaction.reply("learned: " + input);
+        return await interaction.reply("learned: " + input);
     }
 };

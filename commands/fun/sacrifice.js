@@ -19,9 +19,9 @@ module.exports = {
         const user = interaction.options.getUser('user');
         const green = interaction.options.getBoolean('green');
         if (green) {
-            await interaction.reply(`sacrificed ${user} to the greenabakumori gods`);
+            return await interaction.reply(`sacrificed ${user} to the greenabakumori gods`);
         } else {
-            await interaction.reply(`sacrificed ${user} to the inabakumori gods`);
+            return await interaction.reply(`sacrificed ${user} to the inabakumori gods`);
         }
     }
 };

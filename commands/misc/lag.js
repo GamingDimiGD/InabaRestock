@@ -7,8 +7,8 @@ module.exports = {
     ,
     async execute(interaction) {
         let ms = Date.now();
-        await interaction.deferReply();
+        await interaction.deferReply().catch(() => {});
         ms = Date.now() - ms;
-        await interaction.editReply('Train. ' + ms + 'ms');
+        return await interaction.editReply('Train. ' + ms + 'ms');
     }
 };

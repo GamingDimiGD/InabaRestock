@@ -48,7 +48,7 @@ module.exports = {
         const fromUnit = [...lengthUnits, ...weightUnits, ...volumeUnits].find(unit => unit.name === interaction.options.getString('from'));
         if (!fromUnit) return await interaction.reply(`invalid unit ${interaction.options.getString('from')}`);
         const unitType = lengthUnits.some(unit => unit.name === fromUnit.name) ? "length" : weightUnits.some(unit => unit.name === fromUnit.name) ? "weight" : "volume";
-        await interaction.reply({
+        return await interaction.reply({
             embeds: [
                 new EmbedBuilder()
                     .setTitle(`${number}${fromUnit.symbol} is...`)

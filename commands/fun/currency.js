@@ -35,21 +35,21 @@ module.exports = {
         const amount = interaction.options.getNumber('amount'),
             from = interaction.options.getString('from').toUpperCase(), to = interaction.options.getString('to').toUpperCase(),
             toArray = to.split(',').map(e => e.trim()).filter(e => e !== from);
-        if (from === to) return interaction.reply("You can't convert to the same currency!");
-        if (from.length !== 3 || toArray.some(e => e.length !== 3)) return interaction.reply("Invalid currency code! Currency codes must be 3 characters long.");
-        await interaction.deferReply();
-        if (toArray.length > 10) return interaction.editReply("You can only convert to up to 10 currencies at once.");
+        if (from === to) return await interaction.reply("You can't convert to the same currency!");
+        if (from.length !== 3 || toArray.some(e => e.length !== 3)) return await interaction.reply("Invalid currency code! Currency codes must be 3 characters long.");
+        await interaction.deferReply().catch(() => {});
+        if (toArray.length > 10) return await interaction.editReply("You can only convert to up to 10 currencies at once.");
         let res = await fetch(`https://api.frankfurter.dev/v2/rates?base=${from}&quotes=${to}`)
-        if (!res.ok) return interaction.editReply(`Error: ${res.statusText}`);
+        if (!res.ok) return await interaction.editReply(`Error: ${res.statusText}`);
         res = await res.json();
-        if (res.message) return interaction.editReply(`Error: ${res.message}`);
-        if (!res?.length) return interaction.editReply(`Error: Server returned nothing??`);
+        if (res.message) return await interaction.editReply(`Error: ${res.message}`);
+        if (!res?.length) return await interaction.editReply(`Error: Server returned nothing??`);
         const embed = new EmbedBuilder()
             .setTitle(`Exchange rates from ${amount}${from}`)
             .setColor(0x2b2b2b)
             .setDescription(
                 res.map(e => `${e.quote}: ${(e.rate * amount).toFixed(3)}`).join('\n')
             )
-        interaction.editReply({ embeds: [embed] });
+        return await interaction.editReply({ embeds: [embed] });
     }
 };

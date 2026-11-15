@@ -24,6 +24,6 @@ module.exports = {
         } catch (e) {
             return await interaction.reply("Invalid timezone");
         }
-        await interaction.reply(time);
+        return await interaction.reply(time);
     }
 };

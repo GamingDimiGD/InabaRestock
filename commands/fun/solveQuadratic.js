@@ -22,6 +22,6 @@ module.exports = {
     ,
     async execute(interaction) {
         const a = interaction.options.getInteger("a"), b = interaction.options.getInteger("b"), c = interaction.options.getInteger("c");
-        await interaction.reply(`${a}x² + ${b}x + ${c} = 0, x = ${(-b + Math.sqrt(b ** 2 - 4 * a * c)) / (2 * a)}, ${(-b - Math.sqrt(b ** 2 - 4 * a * c)) / (2 * a)}`);
+        return await interaction.reply(`${a}x² + ${b}x + ${c} = 0, x = ${(-b + Math.sqrt(b ** 2 - 4 * a * c)) / (2 * a)}, ${(-b - Math.sqrt(b ** 2 - 4 * a * c)) / (2 * a)}`);
     }
 };

@@ -43,6 +43,6 @@ module.exports = {
         else if (type === 'number') value = parseFloat(value);
         else config[key] = value;
         fs.writeFileSync(configPath, JSON.stringify(config, null, 4));
-        await interaction.reply(`Config ${key} has been set to ${value} (type: ${type}).`);
+        return await interaction.reply(`Config ${key} has been set to ${value} (type: ${type}).`);
     }
 };

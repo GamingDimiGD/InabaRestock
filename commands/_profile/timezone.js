@@ -11,7 +11,7 @@ module.exports = {
                 .setRequired(true)
         ),
     async execute(interaction) {
-        await interaction.deferReply();
+        await interaction.deferReply().catch(() => {});
         const tz = interaction.options.getString('tz');
         let time;
         try {
@@ -24,6 +24,6 @@ module.exports = {
         if (!userData[interaction.user.id]) userData[interaction.user.id] = {};
         userData[interaction.user.id].timezone = tz;
         fs.writeFileSync(`./data/users.json`, JSON.stringify(userData));
-        interaction.editReply(`your preferred timezone has been set to ${tz}!\nYour current time is: ${time}`);
+        return await interaction.editReply(`your preferred timezone has been set to ${tz}!\nYour current time is: ${time}`);
     },
 }
